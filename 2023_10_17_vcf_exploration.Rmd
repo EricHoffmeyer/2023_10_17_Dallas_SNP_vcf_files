@@ -1,0 +1,60 @@
+---
+title: "2023_10_17_vcf_exploration"
+author: "Eric Hoffmeyer"
+date: "2023-10-17"
+#output: html_document
+---
+
+This notebook
+
+# Load libraries
+
+```{r}
+library(tidyverse)
+library(biomaRt)
+library(vcfR)
+```
+
+# Read in data
+
+```{r}
+data.dir <- "data/raw_data/"
+
+s76_c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+s81_c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
+s7657_11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
+s8178_25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
+sDS1_pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
+sDS1_x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
