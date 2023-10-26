@@ -1,0 +1,201 @@
+"","external_gene_name","chromosome_name","start_position","end_position","description","gene_biotype","phenotype_description","source_name","study_external_id"
+"1","","1",2581560,2584533,"novel transcript","lncRNA","","",NA
+"2","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","Autosomal recessive ataxia due to PEX10 deficiency","Orphanet",247815
+"3","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","Infantile Refsum disease","Orphanet",772
+"4","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","NEONATAL ADRENOLEUKODYSTROPHY","Orphanet",44
+"5","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","Zellweger Syndrome","Orphanet",912
+"6","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","PEROXISOME BIOGENESIS DISORDER 6A ZELLWEGER","MIM morbid",614870
+"7","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","PEROXISOME BIOGENESIS DISORDER 6B","MIM morbid",614871
+"8","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","PEROXISOME BIOGENESIS DISORDER 6B","G2P",NA
+"9","PEX10","1",2403964,2413797,"peroxisomal biogenesis factor 10 [Source:HGNC Symbol;Acc:HGNC:8851]","protein_coding","PEROXISOME BIOGENESIS DISORDER COMPLEMENTATION GROUP 7","G2P",NA
+"10","","1",2350414,2352820,"small nuclear ribonucleoprotein N (SNRPN) pseudogene","transcribed_processed_pseudogene","","",NA
+"11","","1",257864,359681,"ribosomal protein L23a (RPL23A) pseudogene","transcribed_processed_pseudogene","","",NA
+"12","PEX14","1",10472288,10630758,"peroxisomal biogenesis factor 14 [Source:HGNC Symbol;Acc:HGNC:8856]","protein_coding","Infantile Refsum disease","Orphanet",772
+"13","PEX14","1",10472288,10630758,"peroxisomal biogenesis factor 14 [Source:HGNC Symbol;Acc:HGNC:8856]","protein_coding","NEONATAL ADRENOLEUKODYSTROPHY","Orphanet",44
+"14","PEX14","1",10472288,10630758,"peroxisomal biogenesis factor 14 [Source:HGNC Symbol;Acc:HGNC:8856]","protein_coding","Zellweger Syndrome","Orphanet",912
+"15","PEX14","1",10472288,10630758,"peroxisomal biogenesis factor 14 [Source:HGNC Symbol;Acc:HGNC:8856]","protein_coding","PEROXISOME BIOGENESIS DISORDER 13A ZELLWEGER","MIM morbid",614887
+"16","PEX14","1",10472288,10630758,"peroxisomal biogenesis factor 14 [Source:HGNC Symbol;Acc:HGNC:8856]","protein_coding","PEROXISOME BIOGENESIS DISORDER COMPLEMENTATION GROUP K","G2P",NA
+"17","PEX14","1",10472288,10630758,"peroxisomal biogenesis factor 14 [Source:HGNC Symbol;Acc:HGNC:8856]","protein_coding","Peroxisome biogenesis disorder 13A","G2P",NA
+"18","SPSB1","1",9292894,9369532,"splA/ryanodine receptor domain and SOCS box containing 1 [Source:HGNC Symbol;Acc:HGNC:30628]","protein_coding","","",NA
+"19","SLC2A5","1",9035106,9088478,"solute carrier family 2 member 5 [Source:HGNC Symbol;Acc:HGNC:11010]","protein_coding","","",NA
+"20","","1",10612222,10616452,"novel transcript, antisense to PEX14","lncRNA","","",NA
+"21","RPL22P3","1",16369150,16369530,"ribosomal protein L22 pseudogene 3 [Source:HGNC Symbol;Acc:HGNC:36804]","processed_pseudogene","","",NA
+"22","NMNAT1","1",9943428,9985501,"nicotinamide nucleotide adenylyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:17877]","protein_coding","Cone rod dystrophy","Orphanet",1872
+"23","NMNAT1","1",9943428,9985501,"nicotinamide nucleotide adenylyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:17877]","protein_coding","Leber congenital amaurosis","Orphanet",65
+"24","NMNAT1","1",9943428,9985501,"nicotinamide nucleotide adenylyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:17877]","protein_coding","LEBER CONGENITAL AMAUROSIS 9","MIM morbid",608553
+"25","NMNAT1","1",9943428,9985501,"nicotinamide nucleotide adenylyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:17877]","protein_coding","SPONDYLOEPIPHYSEAL DYSPLASIA SENSORINEURAL HEARING LOSS IMPAIRED INTELLECTUAL DEVELOPMENT AND LEBER CONGENITAL AMAUROSIS","MIM morbid",619260
+"26","NMNAT1","1",9943428,9985501,"nicotinamide nucleotide adenylyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:17877]","protein_coding","Leber congenital amaurosis","G2P",NA
+"27","","1",9983141,9984568,"novel transcript","lncRNA","","",NA
+"28","CCDC27","1",3746460,3771645,"coiled-coil domain containing 27 [Source:HGNC Symbol;Acc:HGNC:26546]","protein_coding","","",NA
+"29","DISP3","1",11479155,11537551,"dispatched RND transporter family member 3 [Source:HGNC Symbol;Acc:HGNC:29251]","protein_coding","","",NA
+"30","TMEM51","1",15152532,15220478,"transmembrane protein 51 [Source:HGNC Symbol;Acc:HGNC:25488]","protein_coding","","",NA
+"31","WASH9P","1",185217,195411,"WAS protein family homolog 9, pseudogene [Source:HGNC Symbol;Acc:HGNC:53981]","unprocessed_pseudogene","","",NA
+"32","FBXO42","1",16246840,16352480,"F-box protein 42 [Source:HGNC Symbol;Acc:HGNC:29249]","protein_coding","","",NA
+"33","ALDH4A1","1",18871430,18902724,"aldehyde dehydrogenase 4 family member A1 [Source:HGNC Symbol;Acc:HGNC:406]","protein_coding","HYPERPROLINEMIA TYPE 2","Orphanet",79101
+"34","ALDH4A1","1",18871430,18902724,"aldehyde dehydrogenase 4 family member A1 [Source:HGNC Symbol;Acc:HGNC:406]","protein_coding","HYPERPROLINEMIA TYPE II","MIM morbid",239510
+"35","ALDH4A1","1",18871430,18902724,"aldehyde dehydrogenase 4 family member A1 [Source:HGNC Symbol;Acc:HGNC:406]","protein_coding","HYPERPROLINEMIA TYPE 2","G2P",NA
+"36","RER1","1",2391775,2405442,"retention in endoplasmic reticulum sorting receptor 1 [Source:HGNC Symbol;Acc:HGNC:30309]","protein_coding","","",NA
+"37","PANK4","1",2508537,2526597,"pantothenate kinase 4 (inactive) [Source:HGNC Symbol;Acc:HGNC:19366]","protein_coding","Early-onset posterior polar cataract","Orphanet",98993
+"38","PANK4","1",2508537,2526597,"pantothenate kinase 4 (inactive) [Source:HGNC Symbol;Acc:HGNC:19366]","protein_coding","CATARACT 49","MIM morbid",619593
+"39","PANK4","1",2508537,2526597,"pantothenate kinase 4 (inactive) [Source:HGNC Symbol;Acc:HGNC:19366]","protein_coding","Congenital cataract","G2P",NA
+"40","ERRFI1-DT","1",8026738,8122702,"ERRFI1 divergent transcript [Source:HGNC Symbol;Acc:HGNC:55646]","lncRNA","","",NA
+"41","VPS13D","1",12230030,12512047,"vacuolar protein sorting 13 homolog D [Source:HGNC Symbol;Acc:HGNC:23595]","protein_coding","Autosomal recessive cerebellar ataxia-movement disorder syndrome","Orphanet",95434
+"42","VPS13D","1",12230030,12512047,"vacuolar protein sorting 13 homolog D [Source:HGNC Symbol;Acc:HGNC:23595]","protein_coding","SPINOCEREBELLAR ATAXIA AUTOSOMAL RECESSIVE 4","MIM morbid",607317
+"43","GPR157","1",9100305,9129102,"G protein-coupled receptor 157 [Source:HGNC Symbol;Acc:HGNC:23687]","protein_coding","","",NA
+"44","ZBTB40","1",22428838,22531157,"zinc finger and BTB domain containing 40 [Source:HGNC Symbol;Acc:HGNC:29045]","protein_coding","AUTOSOMAL RECESSIVE INTELLECTUAL DEVELOPMENTAL DISORDER","G2P",NA
+"45","","1",16228674,16231335,"novel transcript","lncRNA","","",NA
+"46","NPHP4","1",5862811,5992473,"nephrocystin 4 [Source:HGNC Symbol;Acc:HGNC:19104]","protein_coding","Juvenile nephronophthisis","Orphanet",93592
+"47","NPHP4","1",5862811,5992473,"nephrocystin 4 [Source:HGNC Symbol;Acc:HGNC:19104]","protein_coding","Senior-Loken syndrome","Orphanet",3156
+"48","NPHP4","1",5862811,5992473,"nephrocystin 4 [Source:HGNC Symbol;Acc:HGNC:19104]","protein_coding","NEPHRONOPHTHISIS 4","MIM morbid",606966
+"49","NPHP4","1",5862811,5992473,"nephrocystin 4 [Source:HGNC Symbol;Acc:HGNC:19104]","protein_coding","SENIOR-LOKEN SYNDROME 4","MIM morbid",606996
+"50","NPHP4","1",5862811,5992473,"nephrocystin 4 [Source:HGNC Symbol;Acc:HGNC:19104]","protein_coding","NEPHRONOPHTHISIS TYPE 4","G2P",NA
+"51","NPHP4","1",5862811,5992473,"nephrocystin 4 [Source:HGNC Symbol;Acc:HGNC:19104]","protein_coding","SENIOR-LOKEN SYNDROME 4","G2P",NA
+"52","MT1XP1","1",16241213,16241398,"metallothionein 1X pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:7442]","processed_pseudogene","","",NA
+"53","ARHGEF19-AS1","1",16197854,16198357,"ARHGEF19 antisense RNA 1 [Source:HGNC Symbol;Acc:HGNC:39996]","lncRNA","","",NA
+"54","SZRD1","1",16352575,16398145,"SUZ RNA binding domain containing 1 [Source:HGNC Symbol;Acc:HGNC:30232]","protein_coding","","",NA
+"55","PDIK1L","1",26111165,26125555,"PDLIM1 interacting kinase 1 like [Source:HGNC Symbol;Acc:HGNC:18981]","protein_coding","","",NA
+"56","","1",25581478,25590356,"novel transcript","lncRNA","","",NA
+"57","LAPTM5","1",30732469,30757774,"lysosomal protein transmembrane 5 [Source:HGNC Symbol;Acc:HGNC:29612]","protein_coding","","",NA
+"58","PHACTR4","1",28369582,28500364,"phosphatase and actin regulator 4 [Source:HGNC Symbol;Acc:HGNC:25793]","protein_coding","","",NA
+"59","CNKSR1","1",26177484,26189884,"connector enhancer of kinase suppressor of Ras 1 [Source:HGNC Symbol;Acc:HGNC:19700]","protein_coding","AUTOSOMAL RECESSIVE INTELLECTUAL DEVELOPMENTAL DISORDER","G2P",NA
+"60","MED18","1",28329002,28335965,"mediator complex subunit 18 [Source:HGNC Symbol;Acc:HGNC:25944]","protein_coding","","",NA
+"61","SLC9A1","1",27098809,27166981,"solute carrier family 9 member A1 [Source:HGNC Symbol;Acc:HGNC:11071]","protein_coding","Progressive autosomal recessive ataxia-deafness syndrome","Orphanet",448251
+"62","SLC9A1","1",27098809,27166981,"solute carrier family 9 member A1 [Source:HGNC Symbol;Acc:HGNC:11071]","protein_coding","Lichtenstein-Knorr syndrome","MIM morbid",616291
+"63","LDLRAP1","1",25543606,25568886,"low density lipoprotein receptor adaptor protein 1 [Source:HGNC Symbol;Acc:HGNC:18640]","protein_coding","Homozygous familial hypercholesterolemia","Orphanet",391665
+"64","LDLRAP1","1",25543606,25568886,"low density lipoprotein receptor adaptor protein 1 [Source:HGNC Symbol;Acc:HGNC:18640]","protein_coding","HYPERCHOLESTEROLEMIA FAMILIAL 4","MIM morbid",603813
+"65","LDLRAP1","1",25543606,25568886,"low density lipoprotein receptor adaptor protein 1 [Source:HGNC Symbol;Acc:HGNC:18640]","protein_coding","Hypercholesterolaemia autosomal recessive 1","G2P",NA
+"66","ATP5IF1","1",28236109,28246906,"ATP synthase inhibitory factor subunit 1 [Source:HGNC Symbol;Acc:HGNC:871]","protein_coding","","",NA
+"67","PAFAH2","1",25959767,25998117,"platelet activating factor acetylhydrolase 2 [Source:HGNC Symbol;Acc:HGNC:8579]","protein_coding","","",NA
+"68","ARL8BP2","1",28120449,28121321,"ARL8B pseudogene 2 [Source:HGNC Symbol;Acc:HGNC:56629]","processed_pseudogene","","",NA
+"69","DNAJC8","1",28199456,28233029,"DnaJ heat shock protein family (Hsp40) member C8 [Source:HGNC Symbol;Acc:HGNC:15470]","protein_coding","","",NA
+"70","","1",31263245,31263681,"general transcription factor IIA, 2, 12kDa (GTF2A2) pseudogene","processed_pseudogene","","",NA
+"71","SESN2","1",28259518,28282491,"sestrin 2 [Source:HGNC Symbol;Acc:HGNC:20746]","protein_coding","","",NA
+"72","SERINC2","1",31409565,31434680,"serine incorporator 2 [Source:HGNC Symbol;Acc:HGNC:23231]","protein_coding","","",NA
+"73","PTAFR","1",28147166,28193936,"platelet activating factor receptor [Source:HGNC Symbol;Acc:HGNC:9582]","protein_coding","","",NA
+"74","SNRNP40","1",31259568,31296788,"small nuclear ribonucleoprotein U5 subunit 40 [Source:HGNC Symbol;Acc:HGNC:30857]","protein_coding","","",NA
+"75","SLC25A33","1",9539465,9585173,"solute carrier family 25 member 33 [Source:HGNC Symbol;Acc:HGNC:29681]","protein_coding","","",NA
+"76","EYA3","1",27970344,28088637,"EYA transcriptional coactivator and phosphatase 3 [Source:HGNC Symbol;Acc:HGNC:3521]","protein_coding","","",NA
+"77","ZNF593","1",26169908,26170873,"zinc finger protein 593 [Source:HGNC Symbol;Acc:HGNC:30943]","protein_coding","","",NA
+"78","FABP3","1",31365253,31376850,"fatty acid binding protein 3 [Source:HGNC Symbol;Acc:HGNC:3557]","protein_coding","","",NA
+"79","EPHA2","1",16124337,16156069,"EPH receptor A2 [Source:HGNC Symbol;Acc:HGNC:3386]","protein_coding","Early-onset nuclear cataract","Orphanet",98991
+"80","EPHA2","1",16124337,16156069,"EPH receptor A2 [Source:HGNC Symbol;Acc:HGNC:3386]","protein_coding","Early-onset posterior polar cataract","Orphanet",98993
+"81","EPHA2","1",16124337,16156069,"EPH receptor A2 [Source:HGNC Symbol;Acc:HGNC:3386]","protein_coding","Early-onset posterior subcapsular cataract","Orphanet",441447
+"82","EPHA2","1",16124337,16156069,"EPH receptor A2 [Source:HGNC Symbol;Acc:HGNC:3386]","protein_coding","Total early-onset cataract","Orphanet",98994
+"83","EPHA2","1",16124337,16156069,"EPH receptor A2 [Source:HGNC Symbol;Acc:HGNC:3386]","protein_coding","Cataract 6 multiple types","MIM morbid",116600
+"84","EPHA2","1",16124337,16156069,"EPH receptor A2 [Source:HGNC Symbol;Acc:HGNC:3386]","protein_coding","Cataract 6 multiple types","G2P",NA
+"85","ARHGEF19","1",16197854,16212652,"Rho guanine nucleotide exchange factor 19 [Source:HGNC Symbol;Acc:HGNC:26604]","protein_coding","","",NA
+"86","","1",28239509,28241453,"novel transcript","lncRNA","","",NA
+"87","TNFRSF1B","1",12166991,12209228,"TNF receptor superfamily member 1B [Source:HGNC Symbol;Acc:HGNC:11917]","protein_coding","Classic mycosis fungoides","Orphanet",2584
+"88","TNFRSF1B","1",12166991,12209228,"TNF receptor superfamily member 1B [Source:HGNC Symbol;Acc:HGNC:11917]","protein_coding","Sezary syndrome","Orphanet",3162
+"89","LINC01226","1",31506226,31583306,"long intergenic non-protein coding RNA 1226 [Source:HGNC Symbol;Acc:HGNC:49678]","lncRNA","","",NA
+"90","UBE4B","1",10032832,10181239,"ubiquitination factor E4B [Source:HGNC Symbol;Acc:HGNC:12500]","protein_coding","1p36 deletion syndrome","Orphanet",1606
+"91","TMEM51-AS1","1",15111815,15153618,"TMEM51 antisense RNA 1 [Source:HGNC Symbol;Acc:HGNC:26301]","lncRNA","","",NA
+"92","PLA2G5","1",20028179,20091911,"phospholipase A2 group V [Source:HGNC Symbol;Acc:HGNC:9038]","protein_coding","Familial benign flecked retina","Orphanet",363989
+"93","PLA2G5","1",20028179,20091911,"phospholipase A2 group V [Source:HGNC Symbol;Acc:HGNC:9038]","protein_coding","FLECK RETINA FAMILIAL BENIGN","MIM morbid",228980
+"94","PLA2G5","1",20028179,20091911,"phospholipase A2 group V [Source:HGNC Symbol;Acc:HGNC:9038]","protein_coding","FLECK RETINA FAMILIAL BENIGN","G2P",NA
+"95","ZMYM6","1",34986165,35031945,"zinc finger MYM-type containing 6 [Source:HGNC Symbol;Acc:HGNC:13050]","protein_coding","Intellectual disability","G2P",NA
+"96","AGO4","1",35808016,35857890,"argonaute RISC component 4 [Source:HGNC Symbol;Acc:HGNC:18424]","protein_coding","","",NA
+"97","CPLANE2","1",16231692,16237183,"ciliogenesis and planar polarity effector complex subunit 2 [Source:HGNC Symbol;Acc:HGNC:28127]","protein_coding","","",NA
+"98","FTH1P1","1",37544763,37545294,"ferritin heavy chain 1 pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:3979]","processed_pseudogene","","",NA
+"99","CASZ1","1",10636604,10796650,"castor zinc finger 1 [Source:HGNC Symbol;Acc:HGNC:26002]","protein_coding","1p36 deletion syndrome","Orphanet",1606
+"100","RRAGC","1",38838198,38859772,"Ras related GTP binding C [Source:HGNC Symbol;Acc:HGNC:19902]","protein_coding","","",NA
+"101","SPCS2P4","1",28095742,28096422,"signal peptidase complex subunit 2 pseudogene 4 [Source:HGNC Symbol;Acc:HGNC:45237]","processed_pseudogene","","",NA
+"102","PLA2G2D","1",20111939,20119566,"phospholipase A2 group IID [Source:HGNC Symbol;Acc:HGNC:9033]","protein_coding","","",NA
+"103","","1",34850694,34851555,"novel transcript","lncRNA","","",NA
+"104","RCC2","1",17406760,17439677,"regulator of chromosome condensation 2 [Source:HGNC Symbol;Acc:HGNC:30297]","protein_coding","","",NA
+"105","HSPA5P1","1",38708931,38710890,"HSPA5 pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:54532]","processed_pseudogene","","",NA
+"106","PSMB2","1",35599541,35641526,"proteasome 20S subunit beta 2 [Source:HGNC Symbol;Acc:HGNC:9539]","protein_coding","","",NA
+"107","","1",38864501,38881617,"novel protein","protein_coding","","",NA
+"108","","1",10639241,10654333,"novel transcript, antisense to CASZ1","lncRNA","","",NA
+"109","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Bladder Small Cell Neuroendocrine Carcinoma","Cancer Gene Census",NA
+"110","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Breast Carcinoma by Gene Expression Profile","Cancer Gene Census",NA
+"111","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Burkitts lymphoma","Cancer Gene Census",NA
+"112","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Endometrial Endometrioid Adenocarcinoma","Cancer Gene Census",NA
+"113","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Gallbladder Small Cell Neuroendocrine Carcinoma","Cancer Gene Census",NA
+"114","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Gastric Adenoma","Cancer Gene Census",NA
+"115","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Hepatobiliary Neoplasm","Cancer Gene Census",NA
+"116","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Merkel cell skin cancer","Cancer Gene Census",NA
+"117","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","ND","Cancer Gene Census",NA
+"118","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Ovarian Endometrioid Adenocarcinoma with Squamous Differentiation","Cancer Gene Census",NA
+"119","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Placental Choriocarcinoma","Cancer Gene Census",NA
+"120","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","T-cell acute lymphoblastic leukemia","Cancer Gene Census",NA
+"121","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Acute lymphoblastic leukemia","Cancer Gene Census",NA
+"122","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Acute myeloid leukemia","Cancer Gene Census",NA
+"123","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","aneurysmal bone cyst","Cancer Gene Census",NA
+"124","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Basal cell carcinoma","Cancer Gene Census",NA
+"125","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","bile duct carcinoma","Cancer Gene Census",NA
+"126","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","bladder transitional cell carcinoma","Cancer Gene Census",NA
+"127","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","brain glioblastoma","Cancer Gene Census",NA
+"128","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Breast carcinoma","Cancer Gene Census",NA
+"129","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","breast ductal adenocarcinoma","Cancer Gene Census",NA
+"130","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","cecum adenocarcinoma","Cancer Gene Census",NA
+"131","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","cervical squamous cell carcinoma","Cancer Gene Census",NA
+"132","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Chronic lymphocytic leukemia","Cancer Gene Census",NA
+"133","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Clear cell renal carcinoma","Cancer Gene Census",NA
+"134","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","colon adenocarcinoma","Cancer Gene Census",NA
+"135","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","colon carcinoma","Cancer Gene Census",NA
+"136","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","colonic neoplasm","Cancer Gene Census",NA
+"137","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","colorectal adenocarcinoma","Cancer Gene Census",NA
+"138","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","diffuse gastric adenocarcinoma","Cancer Gene Census",NA
+"139","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","gastric adenocarcinoma","Cancer Gene Census",NA
+"140","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","head and neck squamous cell carcinoma","Cancer Gene Census",NA
+"141","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Hepatocellular Carcinoma","Cancer Gene Census",NA
+"142","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","kidney neoplasm","Cancer Gene Census",NA
+"143","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","lobular breast carcinoma","Cancer Gene Census",NA
+"144","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Lung adenocarcinoma","Cancer Gene Census",NA
+"145","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Lung carcinoma","Cancer Gene Census",NA
+"146","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","lymphoid neoplasm","Cancer Gene Census",NA
+"147","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Melanoma","Cancer Gene Census",NA
+"148","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Multiple myeloma","Cancer Gene Census",NA
+"149","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Neoplasm","Cancer Gene Census",NA
+"150","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","nodular melanoma","Cancer Gene Census",NA
+"151","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","non-small cell lung carcinoma","Cancer Gene Census",NA
+"152","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","oral squamous cell carcinoma","Cancer Gene Census",NA
+"153","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","ovarian mucinous adenocarcinoma","Cancer Gene Census",NA
+"154","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","pancreatic carcinoma","Cancer Gene Census",NA
+"155","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","pancreatic ductal adenocarcinoma","Cancer Gene Census",NA
+"156","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","pancreatic neuroendocrine tumor","Cancer Gene Census",NA
+"157","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","prostate adenocarcinoma","Cancer Gene Census",NA
+"158","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","prostate carcinoma","Cancer Gene Census",NA
+"159","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","rectal adenocarcinoma","Cancer Gene Census",NA
+"160","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","skin carcinoma","Cancer Gene Census",NA
+"161","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","Small cell lung carcinoma","Cancer Gene Census",NA
+"162","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","soft tissue sarcoma","Cancer Gene Census",NA
+"163","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","squamous cell lung carcinoma","Cancer Gene Census",NA
+"164","THRAP3","1",36224432,36305357,"thyroid hormone receptor associated protein 3 [Source:HGNC Symbol;Acc:HGNC:22964]","protein_coding","thyroid carcinoma","Cancer Gene Census",NA
+"165","","1",32465057,32600792,"novel transcript","protein_coding","","",NA
+"166","RPS27P9","1",37556247,37556499,"ribosomal protein S27 pseudogene 9 [Source:HGNC Symbol;Acc:HGNC:36964]","processed_pseudogene","","",NA
+"167","RHBDL2","1",38885807,38941830,"rhomboid like 2 [Source:HGNC Symbol;Acc:HGNC:16083]","protein_coding","","",NA
+"168","ZMYM4","1",35268709,35422058,"zinc finger MYM-type containing 4 [Source:HGNC Symbol;Acc:HGNC:13055]","protein_coding","","",NA
+"169","","1",34981533,35031741,"novel transcript, ZMYM6-ZMYM6NB readthrough","protein_coding","","",NA
+"170","C1orf216","1",35713877,35718894,"chromosome 1 open reading frame 216 [Source:HGNC Symbol;Acc:HGNC:26800]","protein_coding","","",NA
+"171","SHMT1P1","1",43850300,43851611,"SHMT1 pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:10851]","processed_pseudogene","","",NA
+"172","RLF","1",40161387,40240921,"RLF zinc finger [Source:HGNC Symbol;Acc:HGNC:10025]","protein_coding","","",NA
+"173","","1",43650149,43931014,"novel transcript","protein_coding","","",NA
+"174","CLSPN","1",35720218,35769978,"claspin [Source:HGNC Symbol;Acc:HGNC:19715]","protein_coding","","",NA
+"175","GNL2","1",37566816,37595937,"G protein nucleolar 2 [Source:HGNC Symbol;Acc:HGNC:29925]","protein_coding","","",NA
+"176","RPL21P22","1",31108188,31108623,"ribosomal protein L21 pseudogene 22 [Source:HGNC Symbol;Acc:HGNC:36550]","processed_pseudogene","","",NA
+"177","LINC02812","1",53366656,53368245,"long intergenic non-protein coding RNA 2812 [Source:HGNC Symbol;Acc:HGNC:54344]","lncRNA","","",NA
+"178","MORN1","1",2321253,2391707,"MORN repeat containing 1 [Source:HGNC Symbol;Acc:HGNC:25852]","protein_coding","","",NA
+"179","RPL6P1","1",45781277,45781957,"ribosomal protein L6 pseudogene 1 [Source:HGNC Symbol;Acc:HGNC:35972]","processed_pseudogene","","",NA
+"180","TIE1","1",43300982,43323108,"tyrosine kinase with immunoglobulin like and EGF like domains 1 [Source:HGNC Symbol;Acc:HGNC:11809]","protein_coding","LYMPHATIC MALFORMATION 11","MIM morbid",619401
+"181","MYCBP","1",38862493,38873368,"MYC binding protein [Source:HGNC Symbol;Acc:HGNC:7554]","protein_coding","","",NA
+"182","DLGAP3","1",34865436,34929650,"DLG associated protein 3 [Source:HGNC Symbol;Acc:HGNC:30368]","protein_coding","","",NA
+"183","","1",53209783,53213775,"novel transcript, antisense to CPT2","lncRNA","","",NA
+"184","TMA16P2","1",45846994,45847594,"translation machinery associated 16 homolog pseudogene 2 [Source:HGNC Symbol;Acc:HGNC:43781]","processed_pseudogene","","",NA
+"185","RIMS3","1",40620680,40665682,"regulating synaptic membrane exocytosis 3 [Source:HGNC Symbol;Acc:HGNC:21292]","protein_coding","","",NA
+"186","RAB3B","1",51907956,51990700,"RAB3B, member RAS oncogene family [Source:HGNC Symbol;Acc:HGNC:9778]","protein_coding","","",NA
+"187","SMIM12","1",34712737,34859755,"small integral membrane protein 12 [Source:HGNC Symbol;Acc:HGNC:25154]","protein_coding","","",NA
+"188","CZIB","1",53214099,53220634,"CXXC motif containing zinc binding protein [Source:HGNC Symbol;Acc:HGNC:26059]","protein_coding","","",NA
+"189","FAM151A","1",54609181,54623556,"family with sequence similarity 151 member A [Source:HGNC Symbol;Acc:HGNC:25032]","protein_coding","","",NA
+"190","OSBPL9","1",51577179,51798427,"oxysterol binding protein like 9 [Source:HGNC Symbol;Acc:HGNC:16386]","protein_coding","","",NA
+"191","PHB1P3","1",58999676,59000494,"PHB1 pseudogene 3 [Source:HGNC Symbol;Acc:HGNC:8915]","processed_pseudogene","","",NA
+"192","PARS2","1",54756898,54764523,"prolyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:30563]","protein_coding","Non-specific early-onset epileptic encephalopathy","Orphanet",442835
+"193","PARS2","1",54756898,54764523,"prolyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:30563]","protein_coding","DEVELOPMENTAL AND EPILEPTIC ENCEPHALOPATHY 75","MIM morbid",618437
+"194","ZYG11B","1",52726453,52827336,"zyg-11 family member B, cell cycle regulator [Source:HGNC Symbol;Acc:HGNC:25820]","protein_coding","","",NA
+"195","","1",34974356,34985313,"novel protein","protein_coding","","",NA
+"196","DOCK7-DT","1",62688482,62710694,"DOCK7 divergent transcript [Source:HGNC Symbol;Acc:HGNC:55670]","lncRNA","","",NA
+"197","TTC4","1",54715861,54742657,"tetratricopeptide repeat domain 4 [Source:HGNC Symbol;Acc:HGNC:12394]","protein_coding","","",NA
+"198","KLF17","1",44118821,44135140,"KLF transcription factor 17 [Source:HGNC Symbol;Acc:HGNC:18830]","protein_coding","","",NA
+"199","PLPP3","1",56494761,56645301,"phospholipid phosphatase 3 [Source:HGNC Symbol;Acc:HGNC:9229]","protein_coding","","",NA
+"200","SNIP1","1",37534449,37554293,"Smad nuclear interacting protein 1 [Source:HGNC Symbol;Acc:HGNC:30587]","protein_coding","NEURODEVELOPMENTAL DISORDER WITH HYPOTONIA CRANIOFACIAL ABNORMALITIES AND SEIZURES","MIM morbid",614501
