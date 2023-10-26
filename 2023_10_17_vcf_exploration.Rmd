@@ -65,8 +65,6 @@ s76_c_all_df <- bind_cols(df_s76_c, s76_c_gt_df)
 write.csv(s76_c_all_df, file = "data/s76_c_df.csv")
 ```
 
-
-
 # Setup biomaRt
 
 ```{r}
@@ -96,9 +94,7 @@ results <- getBM(attributes = c("external_gene_name", "chromosome_name", "start_
                  filters = c("chromosomal_region"),
                  values = temp, 
                  mart = dataset)
-
 ```
-
 
 To limit regions, run this code
 
@@ -125,7 +121,6 @@ To limit regions, run this code
 ```{r}
 temp <- results %>%
   dplyr::count(external_gene_name, sort = T)
-
 ```
 
 ```{r}
