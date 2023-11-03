@@ -36,11 +36,11 @@ script.date <- "2023_10_17"
 
 ```{r}
 s76_c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
-s81_c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
-s7657_11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
-s8178_25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
-sDS1_pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
-sDS1_x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s81_c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s7657_11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s8178_25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1_pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1_x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
 ```
 
 
@@ -54,9 +54,12 @@ df_s76_c
 ```
 
 ```{r}
+unique(df_s76_c$FILTER)
+```
+
+```{r}
 s76_c_gt_df = data.frame(s76_c@gt)
 s76_c_gt_df
-
 ```
 
 ```{r}
@@ -125,7 +128,7 @@ temp <- results %>%
 
 ```{r}
 temp <- results |> 
-  filter(external_gene_name == "TP53")
+  filter(external_gene_name == "JAK2")
 ```
 
 ```{r}
@@ -137,9 +140,24 @@ temp |>
 
 
 
+# Temporary results write out
 
+Not sure what Dallas wants out of these, so I will share the progress so far to start a conversation about future directions
 
+```{r}
+s76_c_all_df[1:200,] |> 
+  write.csv(file = paste0(folder.name, "/vcf_raw_example.csv"))
+```
 
+```{r}
+results[1:200,] |> 
+  write.csv(file = paste0(folder.name, "/vcf_interpreted_example.csv"))
+```
+
+```{r}
+temp[1:100,] |> 
+  write.csv(file = paste0(folder.name, "/gene_table_example.csv"))
+```
 
 
 
