@@ -1,0 +1,167 @@
+---
+title: "2024_02_14_Common_DS_Mutations"
+format: html
+editor: source
+---
+
+Running VCF samples through Tzu's workflow to map VCF data.
+
+# Load libraries
+
+```{r}
+suppressPackageStartupMessages({
+library(tidyverse)
+library(vcfR)
+library(tictoc)
+# library(qs)
+library(VariantAnnotation)
+library(org.Hs.eg.db)
+library(annotables)
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+library(plyranges)
+library(ChIPseeker) 
+})
+```
+
+# Define path variables
+
+```{r}
+data.dir <- "data/raw_data/"
+
+results.dir <- "2024_02_14_results"
+
+script.date <- "2024_02_14"
+
+if(!exists(results.dir)){
+  dir.create(results.dir)
+}
+```
+
+# Read in data
+
+```{r}
+s76.c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s81.c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s7657.11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s8178.25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1.pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1.x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
+```
+
+Convert to dataframe and save
+
+```{r}
+s76.df <- vcfR2tidy(s76.c)
+
+s76.df
+
+# qsave(s76.df, file = paste0(results.dir, "s76.df.qs"), nthreads = 10)
+# s76.df <- qread(file = paste0(results.dir, "s76.df.qs"), nthreads = 10)
+```
+
+```{r}
+s76.df$fix
+```
+
+```{r}
+s76.df$fix |> 
+  # summarise(range(QUAL))
+  ggplot(aes(x = log10(QUAL))) +
+  geom_histogram()
+```
+## Count: TYPE
+
+```{r}
+s76.df$fix |>
+  dplyr::count(TYPE, sort = T)
+```
+
+# Import Feature Info
+
+```{r}
+TxDb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+```
+
+```{r}
+TxDb.gene <-genes(TxDb)
+TxDb.gene
+```
+
+## gr: exonsBygene
+
+```{r}
+TxDb.exonsBy.gene <- exonsBy(TxDb, "gene")
+TxDb.exonsBy.gene
+```
+
+```{r}
+TxDb.exonsBy.gene[[10]]
+```
+
+# VCF: snp
+
+```{r}
+s76.df$fix|>
+  dplyr::filter(TYPE == "snp")|>
+  dplyr::filter(QUAL >= 300)|>
+  # dplyr::select(CHROM, POS)|>
+  dplyr::rename("seqnames" = CHROM, "start" = POS)|>
+  mutate(end = start)|>
+  as_granges() -> vcfR.full.vcf.gr
+
+vcfR.full.vcf.gr
+```
+
+## Only exon regions
+
+> 108,549 variants.
+
+```{r}
+vcfR.full.inExon.gr = vcfR.full.vcf.gr|>filter_by_overlaps(TxDb.exonsBy.gene)
+```
+
+## Annotate
+
+```{r}
+vcfR.full.inExon.anno = annotatePeak(vcfR.full.inExon.gr,
+                                     tssRegion = c(-10, 10),
+                                     TxDb = TxDb,
+                                     annoDb = "org.Hs.eg.db")
+vcfR.full.inExon.anno@anno
+```
+
+```{r}
+s76.df$meta|>
+  dplyr::filter(ID == "CSQ")|>
+  pull(Description)|>
+  str_split(pattern = ":")|>
+  unlist()|>
+  dplyr::last()|>
+  str_split(pattern = "\\|")|>
+  unlist() -> CSQ.column.names
+CSQ.column.names
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
