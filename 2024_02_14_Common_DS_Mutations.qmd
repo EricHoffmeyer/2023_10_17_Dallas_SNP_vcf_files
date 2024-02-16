@@ -37,14 +37,18 @@ if(!exists(results.dir)){
 }
 ```
 
+```{r}
+options(future.globals.maxSize = 14000 * 1024^2)
+```
+
 # Read in data
 
 ```{r}
-s76.c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s76.c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
 # s81.c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
 # s7657.11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
 # s8178.25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
-# sDS1.pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
+sDS1.pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
 # sDS1.x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
 ```
 
@@ -52,6 +56,11 @@ Convert to dataframe and save
 
 ```{r}
 s76.df <- vcfR2tidy(s76.c)
+# s7657.df <- vcfR2tidy(s7657.11)
+# s81.df <- vcfR2tidy(s81.c)
+# s8178.df <- vcfR2tidy(s8178.25)
+# sDS1.df <- vcfR2tidy(sDS1.pt)
+# sDS1.x <- vcfR2tidy(sDS1.x)
 
 s76.df
 
@@ -60,7 +69,10 @@ s76.df
 ```
 
 ```{r}
-s76.df$fix
+View(s76.df$fix)
+View(sDS1.df$fix)
+
+sDS1.df
 ```
 
 ```{r}
@@ -69,11 +81,12 @@ s76.df$fix |>
   ggplot(aes(x = log10(QUAL))) +
   geom_histogram()
 ```
+
 ## Count: TYPE
 
 ```{r}
-s76.df$fix |>
-  dplyr::count(TYPE, sort = T)
+s76.df$meta |>
+  dplyr::count(Type, sort = T)
 ```
 
 # Import Feature Info
