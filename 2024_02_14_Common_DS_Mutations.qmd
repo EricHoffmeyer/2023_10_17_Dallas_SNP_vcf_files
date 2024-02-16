@@ -44,11 +44,11 @@ options(future.globals.maxSize = 14000 * 1024^2)
 # Read in data
 
 ```{r}
-# s76.c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+s76.c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
 # s81.c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
 # s7657.11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
 # s8178.25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
-sDS1.pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1.pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
 # sDS1.x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
 ```
 
@@ -70,14 +70,13 @@ s76.df
 
 ```{r}
 View(s76.df$fix)
-View(sDS1.df$fix)
 
 sDS1.df
 ```
+Histogram of quality column:
 
 ```{r}
 s76.df$fix |> 
-  # summarise(range(QUAL))
   ggplot(aes(x = log10(QUAL))) +
   geom_histogram()
 ```
@@ -96,7 +95,7 @@ TxDb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 ```
 
 ```{r}
-TxDb.gene <-genes(TxDb)
+TxDb.gene <- genes(TxDb)
 TxDb.gene
 ```
 
@@ -114,45 +113,46 @@ TxDb.exonsBy.gene[[10]]
 # VCF: snp
 
 ```{r}
-s76.df$fix|>
-  dplyr::filter(TYPE == "snp")|>
+s76.gr <- s76.df$fix|>
+  # dplyr::filter(TYPE == "snp")|>
   dplyr::filter(QUAL >= 300)|>
   # dplyr::select(CHROM, POS)|>
   dplyr::rename("seqnames" = CHROM, "start" = POS)|>
   mutate(end = start)|>
-  as_granges() -> vcfR.full.vcf.gr
+  as_granges()
 
-vcfR.full.vcf.gr
+s76.gr
 ```
 
 ## Only exon regions
 
-> 108,549 variants.
-
 ```{r}
-vcfR.full.inExon.gr = vcfR.full.vcf.gr|>filter_by_overlaps(TxDb.exonsBy.gene)
+s76.inExon = s76.gr |> 
+  filter_by_overlaps(TxDb.exonsBy.gene)
 ```
 
 ## Annotate
 
 ```{r}
-vcfR.full.inExon.anno = annotatePeak(vcfR.full.inExon.gr,
-                                     tssRegion = c(-10, 10),
-                                     TxDb = TxDb,
-                                     annoDb = "org.Hs.eg.db")
-vcfR.full.inExon.anno@anno
+s76.anno = annotatePeak(s76.inExon, 
+                        tssRegion = c(-10, 10), 
+                        TxDb = TxDb, annoDb = "org.Hs.eg.db")
+s76.anno@anno
 ```
 
 ```{r}
-s76.df$meta|>
-  dplyr::filter(ID == "CSQ")|>
-  pull(Description)|>
-  str_split(pattern = ":")|>
-  unlist()|>
-  dplyr::last()|>
-  str_split(pattern = "\\|")|>
-  unlist() -> CSQ.column.names
-CSQ.column.names
+s76.csq.names <- s76.df$meta|>
+  dplyr::filter(ID == "ANN") |>
+  pull(Description) |>
+  str_split(pattern = ":") |>
+  unlist() |>
+  dplyr::last() |>
+  str_split(pattern = "\\|") |>
+  unlist()
+
+s76.csq.names
+
+View(s76.df$meta)
 ```
 
 
