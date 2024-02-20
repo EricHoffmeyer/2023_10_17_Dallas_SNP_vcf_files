@@ -28,7 +28,7 @@ library(ChIPseeker)
 ```{r}
 data.dir <- "data/raw_data/"
 
-results.dir <- "2024_02_14_results"
+results.dir <- "2024_02_14_results/"
 
 script.date <- "2024_02_14"
 
@@ -45,22 +45,12 @@ options(future.globals.maxSize = 14000 * 1024^2)
 
 ```{r}
 s76.c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
-# s81.c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
-# s7657.11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
-# s8178.25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
-# sDS1.pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
-# sDS1.x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
 ```
 
 Convert to dataframe and save
 
 ```{r}
 s76.df <- vcfR2tidy(s76.c)
-# s7657.df <- vcfR2tidy(s7657.11)
-# s81.df <- vcfR2tidy(s81.c)
-# s8178.df <- vcfR2tidy(s8178.25)
-# sDS1.df <- vcfR2tidy(sDS1.pt)
-# sDS1.x <- vcfR2tidy(sDS1.x)
 
 s76.df
 
@@ -71,7 +61,7 @@ s76.df
 ```{r}
 View(s76.df$fix)
 
-sDS1.df
+View(s76.df$meta)
 ```
 Histogram of quality column:
 
@@ -83,9 +73,11 @@ s76.df$fix |>
 
 ## Count: TYPE
 
+My VCF file doesn't have the TYPE column? Ask Tzu for a way to change this.
+
 ```{r}
-s76.df$meta |>
-  dplyr::count(Type, sort = T)
+# s76.df$fix |>
+#   dplyr::count(TYPE, sort = T)
 ```
 
 # Import Feature Info
@@ -110,38 +102,47 @@ TxDb.exonsBy.gene
 TxDb.exonsBy.gene[[10]]
 ```
 
-# VCF: snp
+# VCF df to granges
+
+Commenting out TYPE filter step for now.
+Also changing QUAL requirements
 
 ```{r}
 s76.gr <- s76.df$fix|>
-  # dplyr::filter(TYPE == "snp")|>
-  dplyr::filter(QUAL >= 300)|>
-  # dplyr::select(CHROM, POS)|>
-  dplyr::rename("seqnames" = CHROM, "start" = POS)|>
-  mutate(end = start)|>
+  # dplyr::filter(TYPE == "snp") |>
+  dplyr::filter(QUAL >= 200) |>
+  # dplyr::select(CHROM, POS) |>
+  dplyr::rename("seqnames" = CHROM, "start" = POS) |>
+  mutate(end = start) |>
   as_granges()
 
 s76.gr
+# 33,403 rows with QUAL 300
+# 41,035 rows with QUAL 200
 ```
 
 ## Only exon regions
 
+Filter out any intron mutations from our granges object
+
 ```{r}
-s76.inExon = s76.gr |> 
+s76.inExon <- s76.gr |> 
   filter_by_overlaps(TxDb.exonsBy.gene)
 ```
 
 ## Annotate
 
 ```{r}
-s76.anno = annotatePeak(s76.inExon, 
+s76.anno <- annotatePeak(s76.inExon, 
                         tssRegion = c(-10, 10), 
                         TxDb = TxDb, annoDb = "org.Hs.eg.db")
 s76.anno@anno
 ```
 
+We are going to expand out the `ANN` column from the dataframe. This chunk pulls out the column names.
+
 ```{r}
-s76.csq.names <- s76.df$meta|>
+ANN.colnames <- s76.df$meta|>
   dplyr::filter(ID == "ANN") |>
   pull(Description) |>
   str_split(pattern = ":") |>
@@ -150,25 +151,95 @@ s76.csq.names <- s76.df$meta|>
   str_split(pattern = "\\|") |>
   unlist()
 
-s76.csq.names
-
-View(s76.df$meta)
+ANN.colnames
 ```
 
+This chunk uses matches the column names with the corresponding data in our dataframe.
 
+```{r}
+s76.inExon.vars <- s76.anno@anno |>  
+  as_tibble() |>  
+  separate(col = ANN, into = ANN.colnames, sep = "\\|")
 
+s76.inExon.vars
+```
 
+Write out results
+```{r}
+write_csv(s76.inExon.vars, file = paste0(results.dir, "s76.inExon.vars.csv"))
+```
 
+Map a variable to look at
 
+```{r}
+s76.inExon.vars %>% 
+  ggplot(aes(x = ` Annotation_Impact `)) +
+  geom_bar() +
+  coord_flip()
+  # dplyr::count(Consequence, sort = T)
+```
 
+# Function to process other samples
 
+Combining and streamlining previous code chunks to run through other samples.
 
+Note, I've read in `TxDb.exonsBy.gene` at this point
 
+```{r}
+vcf_mapping <- function(name){
+  # Read in sample
+  vcf <- read.vcfR(file = paste0(data.dir, name, ".haplotypecaller.filtered_snpEff.ann.vcf"))
+                
+  # Convert to tidydf
+  df <- vcfR2tidy(vcf)
+  
+  # Convert to granges
+  gr <- df$fix|>
+  dplyr::filter(QUAL >= 200) |>
+  dplyr::rename("seqnames" = CHROM, "start" = POS) |>
+  mutate(end = start) |>
+  as_granges()
+  
+  # Map to exons
+  inExon <- gr |> 
+  filter_by_overlaps(TxDb.exonsBy.gene)
+  
+  # Annotate
+  anno <- annotatePeak(inExon, 
+                        tssRegion = c(-10, 10), 
+                        TxDb = TxDb, annoDb = "org.Hs.eg.db")
+  
+  # Pull out ANN column names
+  ANN.colnames <- df$meta|>
+  dplyr::filter(ID == "ANN") |>
+  pull(Description) |>
+  str_split(pattern = ":") |>
+  unlist() |>
+  dplyr::last() |>
+  str_split(pattern = "\\|") |>
+  unlist()
+  
+  # Use ANN.colnames to flesh out ANN column in anno df
+  inExon.vars <- anno@anno |>  
+  as_tibble() |>  
+  separate(col = ANN, into = ANN.colnames, sep = "\\|")
+  
+  # write results to csv
+  write_csv(inExon.vars, file = paste0(results.dir, name, ".inExon.vars.csv"))
+}
+```
 
+Set up loop and run
 
+```{r}
+vcf_names <- c("76_C_S47", "81_C_S50", "7657_11_S22", "8178_25_S16", "DS1_Pt_S37", "DS1_X_S34")
+```
 
-
-
+```{r}
+for (i in vcf_names) {
+  vcf_mapping(i)
+}
+```
 
 
 
