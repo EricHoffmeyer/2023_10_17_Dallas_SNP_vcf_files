@@ -1,0 +1,29 @@
+---
+title: "2024_03_04_VCF_class"
+format: html
+editor: source
+---
+
+This workbook will go through the "Genomic Variants with Bioconductor course from `https://rockefelleruniversity.github.io/RU_GenomicVariants/index.html`
+
+# Install packages
+
+```{r}
+# BiocManager::install('RockefellerUniversity/RU_GenomicVariants',subdir='genomicvariants')
+# BiocManager::install('methods')
+# BiocManager::install('rmarkdown')
+# BiocManager::install('RCurl')
+# BiocManager::install('BSgenome.Hsapiens.UCSC.hg19')
+# BiocManager::install('TxDb.Hsapiens.UCSC.hg19.knownGene')
+# BiocManager::install('SNPlocs.Hsapiens.dbSNP144.GRCh37')
+# BiocManager::install('GenomicFeatures')
+# BiocManager::install('maftools')
+# BiocManager::install('NMF')
+# BiocManager::install('BiocGenerics')
+# BiocManager::install('R.utils')
+# BiocManager::install('testthat')
+# BiocManager::install('yaml')
+
+```
+
+# Load Libraries
