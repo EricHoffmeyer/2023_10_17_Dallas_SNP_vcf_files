@@ -13,3 +13,5 @@ UPDATE: This did not have quite the functionality that I wanted. Namely to ident
 
 ## 2024_03_04_VCF_class.qmd
 Results from 2024_03_04_VCF_class.qmd where I use a new workflow to read and process the VCF files.
+
+## 2024_03_06_vcf2maf.qmd
