@@ -4,7 +4,7 @@ format: html
 editor: source
 ---
 
-Running VCF samples through Tzu's workflow to map VCF data.
+Running VCF samples through Tzu's workflow "2024-01-18_Whole_VCF_swipe.qmd" to map VCF data.
 
 # Load libraries
 
