@@ -1,0 +1,187 @@
+---
+title: "2024_03_14_VCF_to_MAF"
+format: html
+editor: visual
+---
+
+This notebook will work through a pipeline Tzu developed to transfrom VCF files into ANNOVAR tables, and then turn those tables into MAF files for better visualization of the variant data.
+
+# Libraries
+
+```{r}
+library(tidyverse)
+library(plyranges)
+library(vcfR)
+library(maftools)
+```
+
+# Directories
+
+```{r}
+data.dir <- "data/raw_data/"
+
+results.dir <- "2024_03_14_results/"
+
+if(!exists(results.dir)){
+  dir.create(results.dir)
+}
+```
+
+# Read in first VCF file
+
+```{r}
+vcf <- vcfR::read.vcfR(file = paste0(data.dir, "x76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+
+vcf.df <- vcfR2tidy(vcf)
+```
+
+`table_annovar.pl` only needs these specific column and how to name them in these specific format. This will remove and reduce the original VCF footprint significantly.
+
+```{r}
+vcf.df$fix |> 
+  dplyr::select(ChromKey, POS, REF, ALT, QUAL) |> 
+  mutate(END = (POS + nchar(REF)) - 1, .after = POS) |> 
+  write_tsv(file = paste0(results.dir, "avinput/x76_C_S47.avinput"), col_names = F)
+```
+
+Repeat this process for the other samples
+
+```{r}
+vcf.to.avinput <- function(x) {
+  vcf <- vcfR::read.vcfR(file = paste0(data.dir, x, ".haplotypecaller.filtered_snpEff.ann.vcf"))
+
+  vcf.df <- vcfR2tidy(vcf)
+  
+  vcf.df$fix |> 
+    dplyr::select(ChromKey, POS, REF, ALT, QUAL) |> 
+    mutate(END = (POS + nchar(REF)) - 1, .after = POS) |> 
+    write_tsv(file = paste0(results.dir, "avinput/", x, ".avinput"), col_names = F)
+}
+```
+
+Input vector for function
+
+```{r}
+files.names <- c("DS1_X_S34", "DS1_Pt_S37", "x81_C_S50", "x7657_11_S22", "x8178_25_S16")
+```
+
+Run the function
+
+```{r}
+for (i in files.names) {
+  vcf.to.avinput(i)
+}
+```
+
+This next chunk of code runs on my Powershell in a conda environment. I'll detail the setup later.
+
+```{perl}
+table_annovar.pl data/x8178_25_S16.avinput annovar/humandb/ -buildver hg19 -out results/x8178_25_S16 -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation gx,r,f,f,f -nastring . -csvout -polish -xref annovar/example/gene_xref.txt
+```
+
+The result files were put in 2024_03_14_results/multianno/
+
+Now we read them into the environment while adding an extra column denoting the original sample name.
+
+```{r}
+DS1_Pt_S37 <- read_csv(paste0(results.dir, "multianno/DS1_Pt_S37.hg19_multianno.csv")) |> 
+  mutate(sample = "DS1_Pt_S37", .after = Alt)
+DS1_X_S34 <- read_csv(paste0(results.dir, "multianno/DS1_X_S34.hg19_multianno.csv")) |> 
+  mutate(sample = "DS1_X_S34", .after = Alt)
+x76_C_S47 <- read_csv(paste0(results.dir, "multianno/x76_C_S47.hg19_multianno.csv")) |> 
+  mutate(sample = "x76_C_S47", .after = Alt)
+x81_C_S50 <- read_csv(paste0(results.dir, "multianno/x81_C_S50.hg19_multianno.csv")) |> 
+  mutate(sample = "x81_C_S50", .after = Alt)
+x7657_11_S22 <- read_csv(paste0(results.dir, "multianno/x7657_11_S22.hg19_multianno.csv")) |> 
+  mutate(sample = "x7657_11_S22", .after = Alt)
+x8178_25_S16 <- read_csv(paste0(results.dir, "multianno/x8178_25_S16.hg19_multianno.csv")) |> 
+  mutate(sample = "x8178_25_S16", .after = Alt)
+```
+
+Combine the files together
+
+```{r}
+ds.df <- bind_rows(DS1_Pt_S37, DS1_X_S34, x76_C_S47, x81_C_S50, x7657_11_S22, x8178_25_S16)
+
+write_tsv(ds.df, file = paste0(results.dir, "multianno/all_multianno.txt"))
+
+rm(DS1_Pt_S37, DS1_X_S34, x76_C_S47, x81_C_S50, x7657_11_S22, x8178_25_S16, ds.df)
+```
+
+# MAFtools
+
+```{r}
+ds.maf <- maftools::annovarToMaf(paste0(results.dir, "multianno/all_multianno.txt"),
+                                 MAFobj = T,
+                                 tsbCol = "sample")
+```
+
+```{r, fig.height=10}
+png(filename = paste0(results.dir, "variant_summary_plot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+plotmafSummary(maf = ds.maf)
+
+dev.off()
+```
+
+```{r}
+png(filename = paste0(results.dir, "variant_bar_plot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+mafbarplot(ds.maf, n = 40)
+
+dev.off()
+```
+
+```{r}
+png(filename = paste0(results.dir, "oncoplot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+oncoplot(maf = ds.maf, top = 40,
+              # draw_titv = T,
+              # showTumorSampleBarcodes = T
+              )
+dev.off()
+```
+
+```{r}
+lollipopPlot(maf = ds.maf,
+             gene = "LOC441155",
+             AACol = "AAChange",
+             showMutationRate = T,
+             labelPos = "all")
+```
+
+```{r}
+png(filename = paste0(results.dir, "MUC5B_lollipop_plot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+lollipopPlot(maf = ds.maf,
+             gene = "MUC5B",
+             AACol = "aaChange",
+             showMutationRate = T,
+             labelPos = "all")
+
+dev.off()
+```
+
+```{r}
+?lollipopPlot
+```
