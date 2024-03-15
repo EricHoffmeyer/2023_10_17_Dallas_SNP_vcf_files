@@ -1,0 +1,156 @@
+---
+title: "2023_10_17_vcf_exploration"
+format: html
+editor: source
+---
+
+This notebook will run through Tzu's basic pipeline on Notion for analyzing/interpreting VCF files with one of Dallas' down syndrome samples.
+
+# Load libraries
+
+```{r}
+suppressPackageStartupMessages({
+library(tidyverse)
+library(vcfR)
+library(dplyr)
+library(biomaRt)
+library(stringr)
+})
+```
+
+# Define path variables/Read in data
+
+```{r}
+data.dir <- "data/raw_data/"
+
+folder.name <- "2023_10_17_results"
+
+script.date <- "2023_10_17"
+
+if(!exists(folder.name)){
+  dir.create(folder.name)
+}
+```
+
+```{r}
+s76_c <- read.vcfR(file = paste0(data.dir, "76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s81_c <- read.vcfR(file = paste0(data.dir, "81_C_S50.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s7657_11 <- read.vcfR(file = paste0(data.dir, "7657_11_S22.haplotypecaller.filtered_snpEff.ann.vcf"))
+# s8178_25 <- read.vcfR(file = paste0(data.dir, "8178_25_S16.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1_pt <- read.vcfR(file = paste0(data.dir, "DS1_Pt_S37.haplotypecaller.filtered_snpEff.ann.vcf"))
+# sDS1_x <- read.vcfR(file = paste0(data.dir, "DS1_X_S34.haplotypecaller.filtered_snpEff.ann.vcf"))
+```
+
+
+```{r}
+s76_c
+```
+
+```{r}
+df_s76_c <- data.frame(getFIX(s76_c))
+df_s76_c
+```
+
+```{r}
+unique(df_s76_c$FILTER)
+```
+
+```{r}
+s76_c_gt_df = data.frame(s76_c@gt)
+s76_c_gt_df
+```
+
+```{r}
+s76_c_all_df <- bind_cols(df_s76_c, s76_c_gt_df)
+
+write.csv(s76_c_all_df, file = "data/s76_c_df.csv")
+```
+
+# Setup biomaRt
+
+```{r}
+mart <- useMart('ensembl')
+## Be patient: this might need a few trials ...
+dataset <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+```
+
+## Extract Genomic Coordinates
+
+```{r}
+temp <- s76_c_all_df %>%
+  mutate(CHROM = str_remove(CHROM, pattern = "chr")) %>%
+  mutate(GenePos = str_c(CHROM, POS, POS, sep = ":")) %>%
+  pull(GenePos)
+
+head(temp)
+
+```
+
+## Run biomaRT
+
+*** 15 MINUTE RUNTIME FOR THIS STEP!!! ***
+
+```{r}
+results <- getBM(attributes = c("external_gene_name", "chromosome_name", "start_position", "end_position", "description", "gene_biotype", "phenotype_description", "source_name", "study_external_id"),
+                 filters = c("chromosomal_region"),
+                 values = temp, 
+                 mart = dataset)
+```
+
+To limit regions, run this code
+
+```{r}
+# mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+# 
+# regions = c("1:661517:668171","1:787463:794591") #add/subtract regions as desired
+# 
+# attribs = c("chromosome_name",
+#              "start_position",
+#              "end_position",
+#              "strand",
+#              "ensembl_gene_id",
+#              "hgnc_symbol")
+# 
+# result = getBM(filters = "chromosomal_region", 
+#                values =regions,
+#                attributes = attribs, 
+#                mart = mart)
+```
+
+```{r}
+temp <- results %>%
+  dplyr::count(external_gene_name, sort = T)
+```
+
+```{r}
+temp <- results |> 
+  filter(external_gene_name == "JAK2")
+```
+
+```{r}
+temp |> 
+  dplyr::count(phenotype_description, sort = T)
+```
+
+# Temporary results write out
+
+Not sure what Dallas wants out of these, so I will share the progress so far to start a conversation about future directions
+
+```{r}
+s76_c_all_df[1:200,] |> 
+  write.csv(file = paste0(folder.name, "/vcf_raw_example.csv"))
+```
+
+```{r}
+results[1:200,] |> 
+  write.csv(file = paste0(folder.name, "/vcf_interpreted_example.csv"))
+```
+
+```{r}
+temp[1:100,] |> 
+  write.csv(file = paste0(folder.name, "/gene_table_example.csv"))
+```
+
+
+
+
