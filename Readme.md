@@ -16,3 +16,5 @@ Results from 2024_03_04_VCF_class.qmd where I use a new workflow to read and pro
 
 ## 2024_03_14_results
 Results from 2024_03_14_VCF_to_MAF.qmd where the VCF files were wrangled, converted to annovar format using perl in a separate conda environment, then reloaded in annovar format and converted to MAF format for use with maftools.
+
+--- Note: not seeing variants that I saw when looking at the viles on IGV. Need to troubleshoot this.
