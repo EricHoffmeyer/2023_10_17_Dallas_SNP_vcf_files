@@ -183,5 +183,9 @@ dev.off()
 ```
 
 ```{r}
-?lollipopPlot
+lollipopPlot(maf = ds.maf,
+             gene = "JAK2",
+             AACol = "aaChange",
+             showMutationRate = T,
+             labelPos = "all")
 ```
