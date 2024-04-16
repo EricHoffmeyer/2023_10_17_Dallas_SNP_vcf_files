@@ -1,0 +1,353 @@
+---
+title: "2024_04_15_vcf_to_maf_troubleshooting"
+format: html
+editor: source
+---
+
+I initially ran `2024_03_14_VCF_to_MAF.qmd` and got some good looking results for variant analysis. However, there were some issues. Patient 76 is known to have a JAK2 R638G mutation, which can be confirmed by looking at the bam and annotated vcf files in IGV software. The results of the pipeline, however, showed no mutations on JAK2 for any of the samples.
+
+This notebook will try and identify where the loss of this mutation happens in the patient 76 data.
+
+# Libraries
+
+```{r}
+library(tidyverse)
+library(plyranges)
+library(vcfR)
+library(maftools)
+```
+
+# Directories
+
+```{r}
+data.dir <- "data/raw_data/"
+
+results.dir <- "2024_04_15_results/"
+
+if(!exists(results.dir)){
+  dir.create(results.dir)
+}
+```
+
+# Read in VCF file
+
+```{r}
+vcf <- vcfR::read.vcfR(file = paste0(data.dir, "x76_C_S47.haplotypecaller.filtered_snpEff.ann.vcf"))
+
+vcf.df <- vcfR2tidy(vcf)
+```
+
+From the IGV software, the R638G mutation occurs on chromosome 9 at position 5,078,360. Let's try and find that in the `vcf.df$fix` dataframe.
+
+```{r}
+vcf.df$fix |> 
+  dplyr::filter(CHROM == "chr9",
+                POS > 5078000,
+                POS < 5079000)
+```
+
+There it is. Now we can track it through the process.
+
+The next bit of code wrote a tab separate value using 5 columns from the vcf$fix dataframe. 
+
+```{r}
+vcf.df$fix |> 
+  dplyr::select(ChromKey, POS, REF, ALT, QUAL) |> 
+  mutate(END = (POS + nchar(REF)) - 1, .after = POS) |> 
+  # write_tsv(file = paste0(results.dir, "temp.avinput"), col_names = F)
+  filter(POS > 5078000,
+         POS < 5079000)
+```
+
+This might be where our issue is. The initial dplyr select picked the `ChromKey` variable. In the case our our dataset, `ChromKey` does not represent the chromosome number.
+
+Let's try it again and switch `ChromKey` to `CHROM`.
+
+```{r}
+vcf.df$fix |> 
+  dplyr::select(CHROM, POS, REF, ALT, QUAL) |> 
+  mutate(END = (POS + nchar(REF)) - 1, .after = POS) |> 
+  write_tsv(file = paste0(results.dir, "avinput/temp.avinput"), col_names = F) |>  
+  filter(CHROM == "chr9",
+         POS > 5078000,
+         POS < 5079000)
+```
+
+We still have our mutation. Let's see if we can feed this tsv into the ANNOVAR function. Not sure if ANNOVAR can recognize the mixed character/number value of "chr9".
+
+Outside of R, I opened up a powershell terminal. Then I navigated to the folder with `table_annovar.pl` script along with our reference files. I also activated the conda environment ("annotation") that has perl installed.
+
+```{powershell}
+cd .\conda_projects\2023_10_17_Dallas_SNP_vcf_files\
+
+conda activate annotation
+```
+
+Now to run ANNOVAR.
+
+```{powershell}
+perl table_annovar.pl data/temp.avinput annovar/humandb/ -buildver hg19 -out results/temp -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation gx,r,f,f,f -nastring . -csvout -polish -xref annovar/example/gene_xref.txt
+```
+
+Now to read in the results, which are in "multianno" files.
+
+```{r}
+df.76 <- read_csv(file = paste0(results.dir, "multianno/temp.hg19_multianno.csv")) |> 
+  mutate(sample = "x76_C_S47", .after = Alt)
+```
+
+Take a look at the object
+
+```{r}
+head(df.76)
+```
+
+Based on the columns, the code below should find our R638G mutation if it's still there.
+
+```{r}
+df.76 |> 
+  filter(Chr == "chr9",
+         Start > 5078000,
+         End < 5079000)
+```
+
+Still got it. Let's continue through the MAF processing to make sure there are no new downstream errors.
+
+# MAFtools
+
+```{r}
+write_tsv(df.76, file = paste0(results.dir, "multianno/temp_multianno.txt"))
+
+ds.maf <- maftools::annovarToMaf(paste0(results.dir, "multianno/temp_multianno.txt"),
+                                 MAFobj = T,
+                                 tsbCol = "sample")
+```
+
+I am not sure how to navigat the MAF object
+
+```{r}
+ds.maf@data |> 
+  dplyr::filter(Chromosome == "chr9",
+                Start_Position > 5078000,
+                End_Position < 5079000)
+```
+
+
+```{r, fig.height=10}
+# png(filename = paste0(results.dir, "variant_summary_plot.png"),
+#     width = 11,
+#     height = 8,
+#     units = "in",
+#     res = 300,
+#     bg = "white")
+
+plotmafSummary(maf = ds.maf)
+
+# dev.off()
+```
+
+Now for the moment of truth, the lollipop plot.
+
+```{r}
+lollipopPlot(maf = ds.maf,
+             gene = "JAK2",
+             AACol = "AAChange.refGene",
+             showMutationRate = T,
+             labelPos = "all")
+```
+
+```{r}
+rm(vcf, vcf.df, x76_C_S47, temp, df.76, ds.maf)
+```
+
+
+# Re run annovar with other files
+
+This function will read in the vcf files, perform vcfR2tidy, and output a tsv file with the selected columns.
+
+```{r}
+vcf.to.avinput <- function(x) {
+  vcf <- vcfR::read.vcfR(file = paste0(data.dir, x, ".haplotypecaller.filtered_snpEff.ann.vcf"))
+
+  vcf.df <- vcfR2tidy(vcf)
+  
+  vcf.df$fix |> 
+    dplyr::select(CHROM, POS, REF, ALT, QUAL) |> 
+    mutate(END = (POS + nchar(REF)) - 1, .after = POS) |> 
+    write_tsv(file = paste0(results.dir, "avinput/", x, ".avinput"), col_names = F)
+}
+```
+
+Input vector for function
+
+```{r}
+files.names <- c("DS1_X_S34", "DS1_Pt_S37", "x81_C_S50", "x7657_11_S22", "x8178_25_S16")
+```
+
+Run the function
+
+```{r}
+for (i in files.names) {
+  vcf.to.avinput(i)
+}
+```
+
+Back in the powershell conda environment, I ran the code below swapping out the file names as necessary.
+
+```{perl}
+perl table_annovar.pl data/x8178_25_S16.avinput annovar/humandb/ -buildver hg19 -out results/x8178_25_S16 -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation gx,r,f,f,f -nastring . -csvout -polish -xref annovar/example/gene_xref.txt
+```
+
+Now that they have been reprocessed, time to read them back in and merge them into one MAF file.
+
+I will load in the temp.hg19_multianno.csv since it is patient 76.
+
+```{r}
+DS1_Pt_S37 <- read_csv(paste0(results.dir, "multianno/DS1_Pt_S37.hg19_multianno.csv")) |> 
+  mutate(sample = "DS1_Pt_S37", .after = Alt)
+DS1_X_S34 <- read_csv(paste0(results.dir, "multianno/DS1_X_S34.hg19_multianno.csv")) |> 
+  mutate(sample = "DS1_X_S34", .after = Alt)
+x76_C_S47 <- read_csv(paste0(results.dir, "multianno/temp.hg19_multianno.csv")) |> 
+  mutate(sample = "x76_C_S47", .after = Alt)
+x81_C_S50 <- read_csv(paste0(results.dir, "multianno/x81_C_S50.hg19_multianno.csv")) |> 
+  mutate(sample = "x81_C_S50", .after = Alt)
+x7657_11_S22 <- read_csv(paste0(results.dir, "multianno/x7657_11_S22.hg19_multianno.csv")) |> 
+  mutate(sample = "x7657_11_S22", .after = Alt)
+x8178_25_S16 <- read_csv(paste0(results.dir, "multianno/x8178_25_S16.hg19_multianno.csv")) |> 
+  mutate(sample = "x8178_25_S16", .after = Alt)
+```
+
+Combine the files together
+
+```{r}
+ds.df <- bind_rows(DS1_Pt_S37, DS1_X_S34, x76_C_S47, x81_C_S50, x7657_11_S22, x8178_25_S16)
+
+write_tsv(ds.df, file = paste0(results.dir, "multianno/all_multianno.txt"))
+
+rm(DS1_Pt_S37, DS1_X_S34, x76_C_S47, x81_C_S50, x7657_11_S22, x8178_25_S16, ds.df)
+```
+
+# MAFtools
+
+```{r}
+ds.maf <- maftools::annovarToMaf(paste0(results.dir, "multianno/all_multianno.txt"),
+                                 MAFobj = T,
+                                 tsbCol = "sample")
+```
+
+# Plots
+
+```{r, fig.height=10}
+png(filename = paste0(results.dir, "variant_summary_plot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+plotmafSummary(maf = ds.maf)
+
+dev.off()
+```
+
+```{r}
+png(filename = paste0(results.dir, "variant_bar_plot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+mafbarplot(ds.maf, n = 40)
+
+dev.off()
+```
+
+```{r}
+png(filename = paste0(results.dir, "oncoplot.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+oncoplot(maf = ds.maf, top = 20,
+              # draw_titv = T,
+              # showTumorSampleBarcodes = T
+              )
+dev.off()
+```
+
+```{r}
+png(filename = paste0(results.dir, "JAK2.lollipop.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+lollipopPlot(maf = ds.maf,
+             gene = "JAK2",
+             AACol = "AAChange.refGene",
+             showMutationRate = T,
+             labelPos = "all")
+dev.off()
+```
+
+
+```{r}
+png(filename = paste0(results.dir, "ABCA7.lollipop.png"),
+    width = 11,
+    height = 8,
+    units = "in",
+    res = 300,
+    bg = "white")
+
+lollipopPlot(maf = ds.maf,
+             gene = "ABCA7",
+             AACol = "AAChange.refGene",
+             showMutationRate = T,
+             labelPos = "all")
+
+dev.off()
+```
+
+
+```{r}
+lollipopPlot(maf = ds.maf,
+             gene = "ABCA7",
+             AACol = "AAChange.refGene",
+             showMutationRate = T,
+             labelPos = "all",
+             showDomainLabel = T)
+```
+
+
+exon
+Func.refGene
+
+```{r}
+head(ds.maf@data)
+
+temp <- as.factor(ds.maf@data$Func.refGene)
+
+levels(temp)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+sessionInfo()
+```
+
