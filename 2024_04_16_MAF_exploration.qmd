@@ -1,0 +1,306 @@
+---
+title: "2024_04_16_MAF_exploration"
+format: html
+editor: source
+---
+
+Now that we have the MAF file setup correctly, we can do some exploration based off of the maftools vignette
+
+# Libraries
+
+```{r}
+library(tidyverse)
+library(maftools)
+# library(plyranges)
+# library(vcfR)
+```
+
+# Directories
+
+```{r}
+data.dir <- "2024_04_15_results/"
+
+results.dir <- "2024_04_16_results/"
+
+if(!exists(results.dir)){
+  dir.create(results.dir)
+}
+```
+
+
+# Import MAF object
+
+```{r}
+ds.maf <- maftools::annovarToMaf(paste0(data.dir, "multianno/all_multianno.txt"),
+                                 MAFobj = T,
+                                 tsbCol = "sample")
+```
+
+# Wrangling
+
+```{r}
+head(ds.maf@data)
+
+levels(ds.maf@data$Tumor_Sample_Barcode)
+```
+
+# MAF Summary table functions
+
+```{r}
+getSampleSummary(ds.maf)
+```
+
+```{r}
+temp <- getGeneSummary(ds.maf)
+```
+
+```{r}
+getClinicalData(ds.maf)
+```
+
+```{r}
+getFields(ds.maf)
+```
+
+```{r}
+# write.mafSummary(maf = ds.maf, basename = ds.maf)
+
+# Error in as.character.default(new("MAF", data = list(Chromosome = c("chr1",  : 
+#   no method for coercing this S4 class to a vector
+
+?write.mafSummary
+```
+
+# Visualization
+
+## Summary plot
+
+```{r}
+?plotmafSummary
+```
+
+```{r}
+plotmafSummary(ds.maf, rmOutlier = T, 
+               addStat = "median", 
+               dashboard = T, 
+               titvRaw = F,
+               showBarcodes = T)
+```
+
+## Oncoplot
+
+```{r}
+?oncoplot
+```
+
+```{r}
+oncoplot(maf = ds.maf, top = 15,
+              showTumorSampleBarcodes = T,
+              )
+```
+
+## Transitions and Transversions
+
+```{r}
+?plotTiTv
+```
+
+```{r}
+ds.maf.titv <- titv(maf = ds.maf,
+                    plot = T,
+                    useSyn = T)
+
+plotTiTv(ds.maf.titv,
+         showBarcodes = T)
+```
+
+## Lollipop plots
+
+```{r}
+?lollipopPlot
+```
+
+```{r}
+lollipopPlot(maf = ds.maf,
+             gene = "ABCA7",
+             AACol = "AAChange.refGene",
+             labelPos = "all"
+             )
+```
+
+```{r}
+lollipopPlot(maf = ds.maf,
+             gene = "AMER3",
+             AACol = "AAChange.refGene",
+             labelPos = "all")
+
+lollipopPlot(maf = ds.maf,
+             gene = "AMER3",
+             AACol = "aaChange",
+             labelPos = "all")
+```
+
+##
+
+```{r}
+plotProtein(gene = "AMER3", refSeqID = "NM_001105193")
+```
+
+```{r}
+brca <- system.file("extdata", "brca.maf.gz", package = "maftools")
+brca <- read.maf(maf = brca, verbose = F)
+```
+
+```{r}
+subset first!!!
+
+rainfallPlot(maf = ds.maf, detectChangePoints = T, pointSize = 0.4)
+```
+
+
+```{r}
+ds.maf.mutload <- tcgaCompare(maf = ds.maf,
+                              cohortName = "DS MAF",
+                              logscale = T,
+                              capture_size = 50)
+```
+
+
+## Plotting VAF
+
+```{r}
+plotVaf(maf = ds.maf,
+        vafCol = )
+
+# We dont have t_vaf so I'm not sure if we can use another variable for this plot
+```
+
+
+## Copy number analysis
+
+We did not run the data through the GITIC program, so we don't have the necessary input files to do this.
+
+# Somatic Interactions
+
+```{r}
+somaticInteractions(ds.maf, top = 20, pvalue = c(0.05, 0.1))
+```
+
+Detecting cancer driver genes based on positional clustering
+
+cite OncoriveCLUST article 7 if this winds up being useful
+
+```{r}
+?oncodrive
+```
+
+```{r}
+ds.maf.sig <- oncodrive(maf = ds.maf,
+                        AACol = "aaChange",
+                        minMut = 5,
+                        pvalMethod = "zscore")
+
+head(ds.maf.sig)
+```
+
+```{r}
+?plotOncodrive
+```
+
+
+```{r}
+plotOncodrive(res = ds.maf.sig,
+              fdrCutOff = 0.1,
+              useFraction = F,
+              labelSize = 1)
+```
+
+After arranging the ds.maf.sig by total mutations, I see that this outlier cluster is the TAF1L gene.
+
+```{r}
+lollipopPlot(maf = ds.maf,
+             gene = "TAF1L",
+             AACol = "aaChange",
+             labelPos = "all")
+```
+
+Strange how this was missed in the summary plot. It seems to have more mutations that the others, though only present in 4 of the 6 samples. A quick google of the gene shows it may be sex linked to males only???
+
+Either way, the pvalues for any of the genes are not significant. We'll have to delve into this more later.
+
+## pfam domains
+
+```{r}
+ds.maf.pfam <- pfamDomains(maf = ds.maf,
+                           AACol = "aaChange",
+                           top = 10
+                           )
+```
+
+```{r}
+temp <- ds.maf.pfam$proteinSummary[,1:7, with = F]
+```
+
+
+```{r}
+ds.maf.pfam$domainSummary[,1:3, with = F]
+```
+
+
+
+
+## Drug-Gene Interactions
+
+This functions checks for drug/gene interactions and gene druggability info compied from Drug Gene Interaction Database (dgidb.org)
+
+```{r}
+maftools::drugInteractions(maf = ds.maf,
+                           fontSize = 0.75)
+```
+
+```{r}
+muc17.dgi <- drugInteractions(genes = "MUC17", drugs = T)
+```
+
+Trying ABCA7, IFITM1, and MUC17 all got the result "No claimed drugs" so not sure how to use this table at the moment.
+
+## Oncogenic signaling pathways
+
+```{r}
+pathways(maf = ds.maf,
+         plotType = "treemap")
+```
+
+
+```{r}
+pws <- pathways(maf = ds.maf,
+         plotType = "bar")
+```
+
+
+```{r}
+plotPathways(maf = ds.maf,
+             pathlist = pws)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+sessionInfo()
+```
+
+
+
+
+
+
+
