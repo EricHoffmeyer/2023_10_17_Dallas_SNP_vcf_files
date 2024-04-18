@@ -11,8 +11,6 @@ Now that we have the MAF file setup correctly, we can do some exploration based 
 ```{r}
 library(tidyverse)
 library(maftools)
-# library(plyranges)
-# library(vcfR)
 ```
 
 # Directories
@@ -31,6 +29,8 @@ if(!exists(results.dir)){
 # Import MAF object
 
 ```{r}
+options(future.globals.maxSize = 14000 * 1024^2) 
+
 ds.maf <- maftools::annovarToMaf(paste0(data.dir, "multianno/all_multianno.txt"),
                                  MAFobj = T,
                                  tsbCol = "sample")
@@ -51,7 +51,7 @@ getSampleSummary(ds.maf)
 ```
 
 ```{r}
-temp <- getGeneSummary(ds.maf)
+getGeneSummary(ds.maf)
 ```
 
 ```{r}
@@ -134,11 +134,16 @@ lollipopPlot(maf = ds.maf,
              AACol = "AAChange.refGene",
              labelPos = "all")
 
+```
+
+```{r}
 lollipopPlot(maf = ds.maf,
-             gene = "AMER3",
-             AACol = "aaChange",
+             gene = "JAK2",
+             AACol = "AAChange.refGene",
+             showMutationRate = T,
              labelPos = "all")
 ```
+
 
 ##
 
@@ -215,18 +220,78 @@ plotOncodrive(res = ds.maf.sig,
               labelSize = 1)
 ```
 
+# TAF1L exploration
+
 After arranging the ds.maf.sig by total mutations, I see that this outlier cluster is the TAF1L gene.
 
 ```{r}
 lollipopPlot(maf = ds.maf,
              gene = "TAF1L",
-             AACol = "aaChange",
+             AACol = "txChange",
              labelPos = "all")
 ```
 
 Strange how this was missed in the summary plot. It seems to have more mutations that the others, though only present in 4 of the 6 samples. A quick google of the gene shows it may be sex linked to males only???
 
-Either way, the pvalues for any of the genes are not significant. We'll have to delve into this more later.
+Either way, the pvalues for any of the genes are not significant? Not sure how it's calculated. I want to look and see what the breakdown of mutations is.
+
+```{r}
+head(ds.maf@data)
+
+tafl1l.df <- ds.maf@data |> 
+  filter(Hugo_Symbol == "TAF1L")
+
+unique(tafl1l.df$Tumor_Sample_Barcode)
+```
+
+It's in both DS-1 samples, and the CL samples for DS 76 and 81. That seems odds, but the Pt samples are a heterogenous sampling of bone marrow, and the clone(s) that grew out into the cell line may not have shown up in the initial analysis.
+
+```{r}
+tafl1l.df |> 
+  count(Tumor_Sample_Barcode)
+```
+
+Relatively even distribution between the samples
+
+```{r}
+shared.mut.df <- tafl1l.df |> 
+  count(aaChange) |> 
+  arrange(desc(n)) |> 
+  filter(n == 4)
+
+shared.mut.df
+```
+19 amino acid changes in 4 samples. I don't think it's possible for one sample to contain two aaChange values, but let's just confirm each of these is present in each sample.
+
+```{r}
+shared.mut.vector <- as.vector(shared.mut.df$aaChange)
+
+sample.vector <- c("DS-1-CL", "DS-1-Pt", "DS-76-CL", "DS-81-CL")
+
+# Code to check if all 4 samples have the aaChange. Single iteration
+temp.df <- tafl1l.df |> 
+  filter(aaChange == "p.D1779Y")
+temp.vec <- temp.df$Tumor_Sample_Barcode
+all(sample.vector %in% temp.vec)
+
+# function
+temp_function <- function (x, y){
+    temp.df <- tafl1l.df |> 
+      filter(aaChange == x)
+    
+    temp.vec <- temp.df$Tumor_Sample_Barcode
+    
+    print(all(y %in% temp.vec))
+}
+
+# loop the vector thru the function
+for (i in shared.mut.vector){
+  temp_function(i, sample.vector)
+}
+```
+
+Alright. Stopping here for now. There will likely be another notebook with an emphasis on taking a deeper look into TAF1L and other genes. I think the process here of isolating an exact aaChange across all samples (4 in the case ofo TAF1L) could be useful to approach the ds.maf@data set.
+
 
 ## pfam domains
 
