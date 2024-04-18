@@ -204,17 +204,17 @@ I will load in the temp.hg19_multianno.csv since it is patient 76.
 
 ```{r}
 DS1_Pt_S37 <- read_csv(paste0(results.dir, "multianno/DS1_Pt_S37.hg19_multianno.csv")) |> 
-  mutate(sample = "DS1_Pt_S37", .after = Alt)
+  mutate(sample = "DS-1-Pt", .after = Alt)
 DS1_X_S34 <- read_csv(paste0(results.dir, "multianno/DS1_X_S34.hg19_multianno.csv")) |> 
-  mutate(sample = "DS1_X_S34", .after = Alt)
+  mutate(sample = "DS-1-CL", .after = Alt)
 x76_C_S47 <- read_csv(paste0(results.dir, "multianno/temp.hg19_multianno.csv")) |> 
-  mutate(sample = "x76_C_S47", .after = Alt)
+  mutate(sample = "DS-76-CL", .after = Alt)
 x81_C_S50 <- read_csv(paste0(results.dir, "multianno/x81_C_S50.hg19_multianno.csv")) |> 
-  mutate(sample = "x81_C_S50", .after = Alt)
+  mutate(sample = "DS-81-CL", .after = Alt)
 x7657_11_S22 <- read_csv(paste0(results.dir, "multianno/x7657_11_S22.hg19_multianno.csv")) |> 
-  mutate(sample = "x7657_11_S22", .after = Alt)
+  mutate(sample = "DS-76-Pt", .after = Alt)
 x8178_25_S16 <- read_csv(paste0(results.dir, "multianno/x8178_25_S16.hg19_multianno.csv")) |> 
-  mutate(sample = "x8178_25_S16", .after = Alt)
+  mutate(sample = "DS-81-Pt", .after = Alt)
 ```
 
 Combine the files together
@@ -323,16 +323,7 @@ lollipopPlot(maf = ds.maf,
 ```
 
 
-exon
-Func.refGene
 
-```{r}
-head(ds.maf@data)
-
-temp <- as.factor(ds.maf@data$Func.refGene)
-
-levels(temp)
-```
 
 
 
