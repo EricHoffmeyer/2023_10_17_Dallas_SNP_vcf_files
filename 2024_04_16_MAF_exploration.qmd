@@ -261,7 +261,7 @@ shared.mut.df <- tafl1l.df |>
 
 shared.mut.df
 ```
-19 amino acid changes in 4 samples. I don't think it's possible for one sample to contain two aaChange values, but let's just confirm each of these is present in each sample.
+19 amino acid changes in 4 samples. I don't think it's possible for one sample to contain two identical aaChange values, but let's just confirm each of these is present in each sample.
 
 ```{r}
 shared.mut.vector <- as.vector(shared.mut.df$aaChange)
