@@ -9,7 +9,9 @@ format:
 
 I initially ran `2024_03_14_VCF_to_MAF.qmd` and got some good looking results for variant analysis. However, there were some issues. Patient 76 is known to have a JAK2 R683G mutation, which can be confirmed by looking at the bam and annotated vcf files in IGV software. The results of the pipeline, however, showed no mutations on JAK2 for any of the samples.
 
-This notebook will try and identify where the loss of this mutation happens in the patient 76 data.
+![](2024_04_15_figures/igv%20view.png){fig-align="center"}
+
+This notebook will try and identify where the loss of this mutation happens in the pipeline, using patient 76 VCFdata.
 
 # Libraries
 
@@ -44,7 +46,13 @@ vcf <- vcfR::read.vcfR(file = paste0(data.dir, "x76_C_S47.haplotypecaller.filter
 vcf.df <- vcfR2tidy(vcf)
 ```
 
-From the IGV software, the R683G mutation occurs on chromosome 9 at position 5,078,360. Let's try and find that in the `vcf.df$fix` dataframe.
+## Identify and track mutation of interest: JAK2 R683G
+
+From the IGV software, the R683G mutation occurs on chromosome 9 at position 5,078,360.
+
+![](2024_04_15_figures/igv%20annotations.png){fig-align="center"}
+
+Let's try and find that in the `vcf.df$fix` dataframe.
 
 ```{r}
 vcf.df$fix |> 
@@ -66,9 +74,9 @@ vcf.df$fix |>
          POS < 5079000)
 ```
 
-This is different than before. Our mutation is there, but we lost the "chr9" and it has 22 listed in the `ChromKey` column.
+This is different than before. Our mutation is there, but we lost the "chr9" and it has "22" listed in the `ChromKey` column.
 
-This might be where our issue is. Tzu's VCF files had the chromosome listed under the `ChromKey` variable. In the case our our dataset, `CHROM` represents the chromosome number.
+This might our issue. Tzu's VCF files had the chromosome listed under the `ChromKey` variable. In the case of our dataset, `CHROM` represents the chromosome number.
 
 Let's try it again and switch `ChromKey` to `CHROM`.
 
@@ -84,19 +92,81 @@ vcf.df$fix |>
 
 We still have our mutation and chromosome info now. Let's see if we can feed this tsv into the ANNOVAR function. I am not sure if ANNOVAR can recognize the mixed character/number value of "chr9".
 
-Outside of R, I opened up a powershell terminal. Then I navigated to the folder with `table_annovar.pl` script along with our reference files. I also activated the conda environment ("annotation") that has perl installed.
+# ANNOVAR - setup
 
-Commenting out the powershell code so knitr can render this html document
+I work on a PC, so I don't have a native environment to run ANNOVAR, which is written in Perl. In order to run it, I need to create a conda environment to do this.
 
-```{powershell}
-# cd .\conda_projects\2023_10_17_Dallas_SNP_vcf_files\
-# 
+The following code chunks were prepared following the tutorial recommended by the ANNOVAR website - <https://github.com/WGLab/Workshop_Annotation>
+
+I started by downloading the [Anaconda Distribution Software](https://www.anaconda.com/download) and installing it.
+
+After opening the Navigator, I select "Powershell Prompt."
+
+![](2024_04_15_figures/anaconda.png){fig-align="center"}
+
+Here's a look at the terminal.
+
+![](2024_04_15_figures/terminal.png){fig-align="center" width="667"}
+
+This starts a terminal in my `Users` folder, which is on a different hard drive than the rest of my R data. For convenience I created a few new directories to store relevant files and scripts here.
+
+```{r}
+# In powershell terminal
+
+# mkdir conda_projects
+# cd .\conda_projects\
+# mkdir 2023_10_17_Dallas_SNP_vcf_files
+# cd .\2023_10_17_Dallas_SNP_vcf_files\
+```
+
+Now I can create my conda environment. I will name it "annotation."
+
+```{r}
+# In powershell
+
+# conda create --name annotation
 # conda activate annotation
 ```
 
+![](2024_04_15_figures/conda%20activate.png){fig-align="center"}
+
+The (annotation) at the front of the terminal shows that we are in the conda environment. Now to install perl
+
+```{r}
+# In powershell terminal
+
+# conda install perl
+```
+
+Select "y" when prompted. Once it is complete you can verify the install.
+
+```{r}
+# In powershell terminal
+
+# perl -v
+```
+
+![](2024_04_15_figures/perl%20version.png){fig-align="center"}
+
+Now we can download and install ANNOVAR.
+
+Libraries needed:
+
+-   refGene
+
+-   cytoBand
+
+-   exac03
+
+-   avsnp147
+
+-   dbnsfp30a
+
 Now to run ANNOVAR.
 
-```{powershell}
+```{r}
+# In powershell terminal
+
 # perl table_annovar.pl data/temp.avinput annovar/humandb/ -buildver hg19 -out results/temp -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation gx,r,f,f,f -nastring . -csvout -polish -xref annovar/example/gene_xref.txt
 ```
 
@@ -107,7 +177,7 @@ df.76 <- read_csv(file = paste0(results.dir, "multianno/temp.hg19_multianno.csv"
   mutate(sample = "x76_C_S47", .after = Alt)
 ```
 
-Take a look at the object
+Take a look at the object.
 
 ```{r}
 head(df.76)
@@ -124,8 +194,6 @@ df.76 |>
 
 Still got it. Let's continue through the MAF processing to make sure there are no new downstream errors. For
 
-
-
 # MAFtools
 
 ```{r}
@@ -135,6 +203,7 @@ ds.maf <- maftools::annovarToMaf(paste0(results.dir, "multianno/temp_multianno.t
                                  MAFobj = T,
                                  tsbCol = "sample")
 ```
+
 ```{r}
 View(ds.maf)
 ```
@@ -144,6 +213,7 @@ The variant data is in `ds.maf@data`.
 ```{r}
 head(ds.maf@data)
 ```
+
 New column names for filtering are `Chromosome`, `Start_Position`, and `End_Position.` We can use them to look for our mutation again.
 
 ```{r}
@@ -340,13 +410,8 @@ lollipopPlot(maf = ds.maf,
 # dev.off()
 ```
 
-
-
-
-
 # sessionInfo()
 
 ```{r}
 sessionInfo()
 ```
-
