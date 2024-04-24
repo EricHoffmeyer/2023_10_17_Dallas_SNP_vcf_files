@@ -92,7 +92,9 @@ vcf.df$fix |>
 
 We still have our mutation and chromosome info now. Let's see if we can feed this tsv into the ANNOVAR function. I am not sure if ANNOVAR can recognize the mixed character/number value of "chr9".
 
-# ANNOVAR - setup
+# ANNOVAR
+
+## PC setup - Powershell conda environment
 
 I work on a PC, so I don't have a native environment to run ANNOVAR, which is written in Perl. In order to run it, I need to create a conda environment to do this.
 
@@ -148,11 +150,9 @@ Select "y" when prompted. Once it is complete you can verify the install.
 
 ![](2024_04_15_figures/perl%20version.png){fig-align="center"}
 
-Now we can download and install ANNOVAR.
+Now we can download and install ANNOVAR. You need to enter your name and e-mail on the [ANNOVAR website](https://www.openbioinformatics.org/annovar/annovar_download_form.php) to get the zip file. After that, we need to download and install extra libraries.
 
 Libraries needed:
-
--   refGene
 
 -   cytoBand
 
@@ -162,7 +162,28 @@ Libraries needed:
 
 -   dbnsfp30a
 
-Now to run ANNOVAR.
+It's not mentioned on the website, but the `annotate_variation.pl` script has the download function. The command syntax is:
+
+`perl annotate_variation.pl -buildver (genome version) -downdb (filename) (path)`
+
+The parts in parentheses are to be filled in by the user.
+
+```{r}
+# In powershell terminal
+
+# perl annotate_variation.pl -buildver hg19 -downdb cytoBand humandb/
+# perl annotate_variation.pl -buildver hg19 -downdb exac03 humandb/
+# perl annotate_variation.pl -buildver hg19 -downdb avsnp147 humandb/
+# perl annotate_variation.pl -buildver hg19 -downdb dbnsfp30a humandb/
+```
+
+NOTE: These files are about 10-20GB total, so the download will take some time. When they finish, unzip and remove the contents.
+
+## table_annovar.pl 
+
+Now we can run `table_annovar.pl`. The command syntax is:
+
+perl table_annovar (file path) (library path) -buildver (genome version) --out (result path)
 
 ```{r}
 # In powershell terminal
