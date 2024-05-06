@@ -28,6 +28,6 @@ I did some troubleshooting and fixed the issue where the MAF results were not ma
 Went through the MAFtools vignette with the dataset, looking for interesting functions, plots, and other outputs. Results from that notebook are saved here.
 
 
-## 2024+05_03 Code Review
+## 2024_05_03 Code Review
 
 This notebook (qmd) and rendered html file document the process of feeding VCF files directly into ANNOVAR. Then reading those results into maftools for interrogations, analysis, and visualization. Contains lesson learned from 2024_05_02_ANNOVAR_troubleshooting and 2024_05_01_DS1_and_DS81_mutations.
