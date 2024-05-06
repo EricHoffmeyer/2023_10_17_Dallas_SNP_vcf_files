@@ -1,0 +1,563 @@
+---
+title: "2024_05_03_VCF_Code_Review"
+editor: source
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    toc-expand: 2
+    toc-location: left
+    page-layout: full
+    df-print: kable
+---
+
+This notebook will detail the process of annotating VCF files using ANNOVAR run in a powershell conda environment, then using RStudio to read in, interrogate, and visualize those results with maftools.
+
+Background on the samples: There are 6 whole genome sequencing Variant Call Format (VCF) files, 3 from bone marrow biopsies of Down Syndrome patients with B-cell acute lymphoblastic leukemia (BALL), and 3 samples of immortalized cell lines created from those biopsy samples.
+
+Essentially, we obtained small portions of the biopsy samples and put them into continuous cell culture and the cancerous cells continued to grow and expand. 
+
+Currently there are no established cell lines of Down Syndrome BALL to use as models in experiments to help discover treatments.
+
+We performed the RNAseq on the initial biopsies (labeled "Pt" in the file names) and the resulting cell lines (labeled "CL") that proliferated in culture to compare them to each other.
+
+The post-doc doing this work is writing a paper that details and characterizes the cell lines, and an important part of doing that is comparing their "signatures", both genetic and phenotypic, to the initial biopsy samples. We're comparing signatures, showing similarities and noting any contrasts in an effort to establish the new cell lines as a model to use for research of BALL in Down Syndrome patients.
+
+# Libraries
+
+```{r}
+suppressPackageStartupMessages({
+library(tidyverse)
+library(maftools)
+library(vcfR)
+})
+
+options(future.globals.maxSize = 14000 * 1024^2) 
+```
+
+# Directories
+
+```{r}
+data.dir <- "data/raw_data/"
+
+results.dir <- "2024_05_03_results/"
+
+plots.dir <- "2024_05_03_results/plots/"
+```
+
+# VCF files - Brief Overview
+
+VCF is a common output format for variant call programs due to its simplicity and scalability.
+
+Unfortunately for researchers, it is not very informative in its native form.
+
+```{r}
+#| output: false
+vcf.df <- vcfR::read.vcfR(file = paste0(data.dir, "DS-1-Pt.haplotypecaller.filtered_snpEff.ann.vcf"))
+vcf.df <- vcfR2tidy(vcf.df)
+```
+Look at the data
+```{r}
+head(vcf.df$fix)
+```
+
+It's hard to know what a change in chromosome 1 at position 14,020 from C to T means in terms of effect on the amino acid coding or what gene it relates to. That's where ANNOVAR and maftools come in. They will allow us to add more informative annotation to these variants and create some plots that help us better understand the landscape of variants in our samples.
+
+# ANNOVAR
+
+## PC setup - Powershell conda environment
+
+I work on a PC, so I don't have a native environment to run ANNOVAR, which is written in Perl. I need to create a conda environment with Perl installed to run ANNOVAR.
+
+The following code chunks were based off of the tutorial recommended by the ANNOVAR website - <https://github.com/WGLab/Workshop_Annotation>
+
+I started by downloading the [Anaconda Distribution Software](https://www.anaconda.com/download) and installing it.
+
+After opening the Navigator, I select "Powershell Prompt."
+
+![](2024_05_03_figures/anaconda.png){fig-align="center"}
+
+Here's a look at the powershell terminal.
+
+![](2024_05_03_figures/terminal.png){fig-align="center" width="667"}
+
+This starts a terminal in my `Users` folder, which is on a different hard drive than the rest of my R data. For convenience I created a few new directories to store relevant files and scripts here.
+
+```{r}
+#| eval: false
+# In powershell terminal
+
+mkdir conda_projects
+cd .\conda_projects\
+mkdir 2023_10_17_Dallas_SNP_vcf_files
+cd .\2023_10_17_Dallas_SNP_vcf_files\
+mkdir data
+```
+
+I copied my VCF files into the `data` folder.
+
+Now I can create my conda environment. I will name it "annotation."
+
+```{r}
+#| eval: false
+# In powershell terminal
+
+conda create --name annotation
+
+conda activate annotation
+```
+
+![](2024_05_03_figures/conda%20activate.png){fig-align="center"}
+
+The *(annotation)* at the front of the terminal shows that we are in the newly created conda environment. Now to install Perl.
+
+```{r}
+#| eval: false
+# In powershell terminal
+
+conda install perl
+```
+
+Select "y" when prompted. Once it is complete you can verify the install.
+
+```{r}
+#| eval: false
+# In powershell terminal
+# Check version of perl installed
+
+perl -v
+```
+
+![](2024_05_03_figures/perl%20version.png){fig-align="center"}
+
+Now we can download and install ANNOVAR. You need to enter your name and e-mail on the [ANNOVAR website](https://www.openbioinformatics.org/annovar/annovar_download_form.php) to get the zip file. Unzip the file and put the contents into your project folder, which is *2023_10_17_Dallas_SNP_vcf_files/* in this walkthrough. The contents should look something like this:
+
+![](2024_05_03_figures/annovar%20scripts.png){fig-align="center"}
+
+After that, we need to download and install extra libraries. Libraries available are listed [here](https://annovar.openbioinformatics.org/en/latest/user-guide/download/). Each library has a different version (hg19, hg38, etc), so check the genome version used to generate your VCF files.
+
+Libraries needed:
+
+-   refGene
+
+-   cytoBand
+
+-   exac03
+
+-   avsnp147
+
+-   dbnsfp30a
+
+The `annotate_variation.pl` script has the download function. The command syntax is:
+
+`perl annotate_variation.pl -buildver (genome version) -downdb -webfrom annovar (library name) (path)`
+
+The parts in parentheses are to be filled in by the user. I am also creating a folder called `humandb` to store the libraries and reduce clutter in my project folder.
+
+```{r}
+#| eval: false
+# In powershell terminal
+
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar refGene humandb/
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar cytoBand humandb/
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar exac03 humandb/
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar avsnp147 humandb/
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar dbnsfp30a humandb/
+```
+
+Unzip the libraries and extract the files. Most of the libraries automatically start their file names with the genome version, except for the Cytoband.txt file. In this case, I renamed it "hg38_cytoBand.txt".
+
+![](2024_05_03_figures/annova%20libraries.png){fig-align="center"}
+
+## table_annovar.pl
+
+Now we can run `table_annovar.pl`. I'll put the command first, then follow it up with a table describing all the various parts.
+
+```{r}
+#| eval: false
+# In powershell terminal
+
+perl table_annovar.pl data/DS-1-CL.haplotypecaller.filtered_snpEff.ann.vcf humandb/ -buildver hg38 -out hg38_results/DS-1-CL -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation g,r,f,f,f -nastring . -vcfinput -polish
+
+# Repeat for all 6 samples: DS-1-CL, DS-1-Pt, DS-76-CL, DS-76-Pt, DS-81-CL, DS-81-Pt
+```
+
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| Code                                                 | Description                                                                                            | Other Info                                       |
++:====================================================:+:======================================================================================================:+:================================================:+
+| table_annovar.pl                                     | Script we are calling                                                                                  | Perl scripts end in .pl                          |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| data/DS-1-CL.haplotypecaller.filtered_snpEff.ann.vcf | Directory and name of the input file                                                                   |                                                  |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| humandb/                                             | Location of library files                                                                              | refGene, CytoBand, etc.                          |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -buildver hg38                                       | Flag for genome version (hg38 here)                                                                    | Could be hg19, mm9, etc.                         |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -out hg38_results/DS-1-CL                            | Flag for output directory (hg38_results) and file name. It will make the directory if it doesn't exist | "DS-1-CL" will be the prefix on all output files |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -remove                                              | Removes temporary files                                                                                |                                                  |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a | Protocol flag followed by all the functions we are using. Comma separated                              |                                                  |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -operation g,r,f,f,f                                 | Operation flag specifying type of operation. Comma separated. Five protocols require five flags        | g = gene                                         |
+|                                                      |                                                                                                        |                                                  |
+|                                                      |                                                                                                        | r = region                                       |
+|                                                      |                                                                                                        |                                                  |
+|                                                      |                                                                                                        | f = filter                                       |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -nastring .                                          | Value to display when a score is not available                                                         | "." in our code                                  |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -vcfinput                                            | This flag specifies a VCF file as input                                                                |                                                  |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+| -polish                                              | "Polishes" the protein notation for indels (ex: p.G12Vfs\*2)                                           |                                                  |
++------------------------------------------------------+--------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+
+These and more options can be found by running `perl table_annovar.pl –help` in the terminal.
+
+The results from the function look like this:
+
+![](2024_05_03_figures/annovar%20results.png){fig-align="center"}
+
+These text results can be imported into R using maftools.
+
+# maftools
+
+## Read in ANNOVAR results
+
+I copy/pasted the result files back into my R workspace in `2024_05_03_results`.
+
+Now to read in the ANNOVAR results, which are in multianno.txt files. We can use the `annovarToMaf()` function to do this. The function also lets us input a vector of files. This way it reads and combines them in one step.
+
+```{r}
+# Create an input vector of file names
+file.names <- c("2024_05_03_results/DS-1-CL.hg38_multianno.txt",
+                "2024_05_03_results/DS-1-Pt.hg38_multianno.txt",
+                "2024_05_03_results/DS-76-CL.hg38_multianno.txt",
+                "2024_05_03_results/DS-76-Pt.hg38_multianno.txt",
+                "2024_05_03_results/DS-81-CL.hg38_multianno.txt",
+                "2024_05_03_results/DS-81-Pt.hg38_multianno.txt")
+```
+
+Now to run `annovarToMaf()`. It has the following syntax:
+
+![](2024_05_03_figures/annovar%20to%20maf.png){fig-align="center"}
+
+The following code chunk provides specifies our file name vector, genome version, that they're tab separated text files, and that they are MAF objects. `basename` provides a file name to save the resulting MAF file.
+
+```{r}
+#| output: false
+#| cache: true
+
+ds.maf <- annovarToMaf(annovar = file.names,
+                       refBuild = "hg38",
+                       sep = "\t",
+                       MAFobj = T,
+                       basename = paste0(results.dir, "ds"))
+
+# Read in pre-saved MAF object
+# ds.maf <- read.maf(paste0(results.dir, "ds.maf"))
+```
+
+![](2024_05_03_figures/maftoannovar.png){fig-align="center"}
+
+NOTE: I am taking advantage of a built in feature of the function. MAF files typically have a column called `Tumor_Sample_Barcode`, which is the package's version of sample ID. If that column isn't found or specified (using `tsbCol = )`, the function uses the file name to generate an ID. It is smart enough to clip off ".hg38_multianno.txt" as well, so if you have good file names they can be used in the MAF object.
+
+Take a look at the object. It is a S4 object with a few components:
+
+-   @data - contains the newly annotated variant data
+```{r}
+head(ds.maf@data)
+```
+-   @variants.per.sample - Variant count per sample
+```{r}
+head(ds.maf@variants.per.sample)
+```
+-   @variant.type.summary - Breakdown of variant type per sample (Ins, Del, SNP)
+```{r}
+head(ds.maf@variant.type.summary)
+```
+-   @variant.classification.summary - Breakdown of mutation type per sample (missense, frame shift, etc)
+```{r}
+head(ds.maf@variant.classification.summary)
+```
+-   @gene.summary - Mutations types for each gene
+```{r}
+head(ds.maf@gene.summary)
+```
+-   @summary - Statistics about the samples
+```{r}
+head(ds.maf@summary)
+```
+-   @maf.silent - Table of all variants classified as silent mutations
+```{r}
+head(ds.maf@maf.silent)
+```
+-   @clinical.data - Shows clinical data (like patient outcomes), if any. We don't have any in this data.
+```{r}
+head(ds.maf@clinical.data)
+```
+
+## Data exploration
+
+These tables can be explored with typical tidyverse/dplyr functions to find things like specific mutations, shared mutations, unique mutations, etc.
+
+```{r}
+# Look for mutations in a certain gene of interest
+ds.maf@data |> 
+  filter(Hugo_Symbol == "JAK2")
+```
+
+Dallas gave me a list of commonly mutated genes in BALL samples. I can load that in and search the whole list at once using `inner_join()`
+
+```{r}
+# Look for variants in a list of genes
+# Read in data
+dallas.df <- read.csv(file = "data/common_mutated_genes.csv",
+                      header = F,
+                      col.names = "gene_symbol")
+head(dallas.df)
+
+dallas.df |> 
+  inner_join(ds.maf@data, by = c("gene_symbol" = "Hugo_Symbol")) |> 
+  select(gene_symbol:AAChange.refGene) |> 
+  head()
+```
+
+
+One more example: What gene has the most mutations? Do samples share the same mutations in a gene?
+
+```{r}
+# Look for gene with the most mutations
+ds.maf@gene.summary |> 
+  arrange(desc(total)) |>
+  select(Hugo_Symbol, total) |> 
+  head()
+
+# Look at the gene amino acid changes that the samples share
+ds.maf@data |> 
+  filter(Hugo_Symbol == "ZC3H11B") |> 
+  group_by(aaChange) |> 
+  summarise(count = n()) |> 
+  arrange(desc(count)) |> 
+  head()
+```
+Four of the six samples share some variants. That makes some sense, since the samples are 3 bone marrow biopsy samples of Down Syndrome patients with BALL and the cell lines derived from those samples
+
+## SIDE TANGENT: Different transcripts can give multiple variant results!
+
+I noticed an issue with some of my results. From Dallas, and from loading the bam/vcf files into IGV software, I know that the DS-76-CL sample has a JAK2 R683G mutation.
+This figure comes from loading the .bam file of DS-76-CL into IGV:
+
+![](2024_05_03_figures/igv%20view.png){fig-align="center"}
+
+This is the IGV info on the mutation:
+
+![](2024_05_03_figures/igv%20annotation.png){fig-align="center"}
+
+However, when looking at the `aaChange` variable in my data, I get something else: R534G.
+
+```{r}
+ds.maf@data |> 
+  filter(Hugo_Symbol == "JAK2",
+         Tumor_Sample_Barcode == "DS-76-CL") |> 
+  select(aaChange)
+```
+
+After some digging, it turns out I have multiple transcripts for this variant, stored in the `AAChange.refGene` column. 
+
+```{r}
+ds.maf@data |> 
+  filter(Hugo_Symbol == "JAK2",
+         Tumor_Sample_Barcode == "DS-76-CL") |> 
+  select(AAChange.refGene)
+```
+
+Seven transcript variants, actually:
+
+```{r}
+ds.maf@data |> 
+  filter(Hugo_Symbol == "JAK2",
+         Tumor_Sample_Barcode == "DS-76-CL") |> 
+  select(AAChange.refGene) |> 
+  separate_longer_delim(cols = AAChange.refGene, delim = ",")
+```
+
+How does ANNOVAR handle alternative transcripts? I looked into the FAQ:
+
+![](2024_05_03_figures/splice%20variant%20FAQ.png){fig-align="center"}
+
+When there are multiple transcripts for a variant, ANNOVAR has an order of precedence that it uses to decide which one to put in `aaChange` and which ones to store in `AAChange.refGene`. Here is the order:
+
+![](2024_05_03_figures/transcript%20precedence.png){fig-align="center"}
+
+Unfortunately, all of ours are exonic and have "equal" precedence. I think the next order of precedence is the lowest exon, which results in our `aaChange` being R534G, since exon13 comes before exon15 and exon16.
+
+The way to fix this? I am still troubleshooting it, but there is an argument called `--separate` which will put each transcript variant result in its own row. Unfortunately, this can't be called directly with `table_annovar.pl.` I would need to use `annotate_variation.pl`, which is a more in-depth script that can lead to mistakes if you don't know what you're doing.
+
+There may be a way to specify the `--separate` argument within the `table_annovar.pl` command, but I have not had the time to tinker yet. Check back with this Notion page in the future and I should have a solution posted.
+
+For now, we can move on to the more gratifying part: using maftools for visualization.
+
+## maftools : plots and analysis
+
+Many of the plots below were generated following the [maftools vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/maftools/inst/doc/maftools.html#1_Introduction). I have commented out the parts of the code that specify plot features and saves the plot for display purposes. I left them in because, in my current hands, I could not get the plots to work with any sort of `ggsave()` function and it was the best way to save the plots I knew of.
+
+## Summary plot
+
+This is the summary plot, which has a few things combined. Counts for variant classification, type, Single Nucleotide Variant (SNV) class, variants per sample, and variant classification per sample. Also a list of the top ten mutated genes. Stacked bar charts denote the types of mutations in the gene, with the Variant Classification graph providing the color legend for each variant type. The percentage at the end of the bar indicates the number of samples in the MAF object that also contain a variant in that gene.
+
+```{r, fig.height=10, fig.width=12}
+# png(filename = paste0(results.dir, "variant_summary_plot.png"),
+#     width = 11,
+#     height = 8,
+#     units = "in",
+#     res = 300,
+#     bg = "white")
+
+plotmafSummary(maf = ds.maf,
+               showBarcodes = T)
+
+# dev.off()
+```
+
+NOTE: The top 10 mutated plot and the oncoplot below seem to prioritize sample number over number of mutations when defining "top mutated genes." You'll notice that ZC3H11B and TAF1L gene from our earlier code chunk looking at "What gene has the most mutations?" is not on the plot.
+
+## Oncoplot
+
+The `oncoplot()` function shows a larger view of a group of genes and their variant types. There is a [separate vignette on customizing these plots](https://bioconductor.org/packages/devel/bioc/vignettes/maftools/inst/doc/oncoplots.html).
+
+```{r}
+oncoplot(maf = ds.maf,
+         top = 20)
+```
+
+Most of these genes have more than one mutation (usually 2 or more missense mutations), so they show up as black.
+
+## Transitions and Transversions
+
+This plot shows the breakdown of the single nucleotide polymorphisms (SNPs) and whether they are transitions or transversions.
+
+Transitions are changes within purine or pyrimidine nucleotide type. A <-> G or C <-> T. Transversions are changes of purine <-> pyrimidine
+
+```{r}
+maf.titv <- titv(maf = ds.maf,
+                 plot = TRUE)
+```
+
+## Lollipop plots
+
+A "Lollipop Plot" lets you look at mutations on a gene of interest. The higher the lollipop, the more samples share the mutation.
+
+I'll output two versions for my JAK2 variant, one using `aaChange` and the other using `AAChange.refGene` to show the difference the transcript variants can make
+
+```{r}
+# png(filename = paste0(results.dir, "JAK2_lollipop.png"),
+#     width = 6,
+#     height = 4,
+#     units = "in",
+#     res = 300,
+#     bg = "white")
+
+# Plot using aaChange
+lollipopPlot(maf = ds.maf,
+             gene = "JAK2",
+             AACol = "aaChange",
+             showMutationRate = T,
+             labelPos = "all")
+
+# dev.off()
+```
+
+```{r}
+#Plot using AAChange.refGene
+# Plot using aaChange
+lollipopPlot(maf = ds.maf,
+             gene = "JAK2",
+             AACol = "AAChange.refGene",
+             showMutationRate = T,
+             labelPos = "all")
+```
+
+NOTE: To generate a plot, your MAF object must have amino acid change information. There may be several naming conventions for this column. By default, the function looks for a column called `AAChange`. I can specify `aaChange` or `AAChange.refGene` for my data.
+
+The `getFields()` function shows the available fields, but take a look at your MAF object to confirm you have them and what data they hold.
+
+```{r}
+getFields(ds.maf)
+```
+
+## mafbarplot()
+
+Similar to the oncoplot, but the bar plot takes a count of total mutations and plots it on the x-axis. It's also a stacked bar plot, where the bar for each gene is seperated into chunks denoting mutation type.
+
+```{r}
+# png(filename = paste0(results.dir, "variant_bar_plot.png"),
+#     width = 11,
+#     height = 8,
+#     units = "in",
+#     res = 300,
+#     bg = "white")
+
+mafbarplot(ds.maf, n = 20)
+
+# dev.off()
+```
+
+## Rainfall plots
+
+This plot displays variants as dots on a y-axis that plots inter variant distance. Cancers are known for localized hyper-mutations, so this plot would be good for identifying those locations. My data apparently has a lot of them, which I'm not sure how to interpret, but I wanted to demonstrate the plot.
+
+```{r}
+temp <- subsetMaf(maf = ds.maf, tsb = "DS-81-Pt")
+
+rainfallPlot(maf = temp, detectChangePoints = T, pointSize = 0.4)
+```
+
+## Comparing mutation load against TCGA cohorts
+
+Uses mutation load data from TCGA to compare MAF object against.
+
+```{r}
+ds.maf.mutload <- tcgaCompare(maf = ds.maf,
+                              cohortName = "DS MAF",
+                              logscale = T,
+                              capture_size = 50)
+```
+
+## Copy number data and more
+
+I don't believe I used a library to analyze copy number data, so I don't have the right fields in my MAF object to generate the copy number data plots. I encourage looking at the vignette to see additional maftools visualization and functionality.
+
+## Other plots
+
+Drug Interaction plot
+
+```{r}
+drugInteractions(maf = ds.maf,
+                 fontSize = 0.75)
+```
+
+Breakdown of pathways by variant count
+
+```{r}
+pathways(maf = ds.maf,
+         plotType = "treemap")
+
+pws <- pathways(maf = ds.maf,
+         plotType = "bar")
+```
+
+More Pathway plots
+
+```{r, fig.width=8}
+plotPathways(maf = ds.maf,
+             pathlist = pws)
+```
+
+That pretty much covers the plots I was able to make with my MAF object. But if you have clinical data, copy number data, or other you can generate even more plots using the vignette.
+
+# sessionInfo()
+
+```{r}
+sessionInfo()
+```
