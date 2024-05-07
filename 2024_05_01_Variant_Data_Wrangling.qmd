@@ -1,0 +1,160 @@
+---
+title: "2024_05_01_Variant_Data_Wrangling"
+format: html
+editor: source
+---
+
+Dallas is looking for unique mutations in the DS-1-CL and DS-81-CL samples.
+
+# Libraries
+
+```{r}
+library(tidyverse)
+library(maftools)
+```
+
+# Directories
+
+```{r}
+data.dir <- "2024_05_03_results/"
+
+results.dir <- "2024_05_01_results/"
+
+if(!exists(results.dir)){
+  dir.create(results.dir)
+}
+```
+
+# Import MAF object
+
+```{r}
+options(future.globals.maxSize = 14000 * 1024^2) 
+
+ds.maf <- read.maf(maf = paste0(data.dir, "ds.maf"))
+```
+
+Subset the MAF object into just cell lines, this is what we want to compare.
+
+```{r}
+cl.maf <- subsetMaf(maf = ds.maf,
+                         tsb = c("DS-1-CL", "DS-76-CL", "DS-81-CL"))
+```
+
+Dallas gave me a list of commonly mutated genes in DS ALL samples, so we can start with that
+
+```{r}
+# Read in data
+dallas.df <- read.csv(file = "data/common_mutated_genes.csv",
+                      header = F,
+                      col.names = "gene_symbol")
+```
+
+Now to find the muatations in the common genes for each sample.
+
+```{r}
+common.df <- dallas.df |> 
+  inner_join(cl.maf@data, by = c("gene_symbol" = "Hugo_Symbol")) |> 
+  select(gene_symbol:AAChange.refGene)
+
+```
+
+Dallas wants the ones that are unique to each sample, so we have to get rid of any shared variants. 
+
+Let's see if there are any duplicate aaChange values
+
+```{r}
+dup.df <- common.df |> 
+  group_by(aaChange) |> 
+  summarize(count = n()) |> 
+  arrange(desc(count)) |> 
+  filter(count > 1)
+
+head(dup.df)
+```
+
+Let's remove these. I tried using the `distict()` and `unique()` functions, but they only remove the repeat occurrences of the duplicate instead of all occurrences. `anti_join()` works better.
+
+I'm also separating the `AAChange.refGene` column to pull out the transcript variants. After separating them, I will need to remove the `tx` columns which are unique to each row so I can perform `distinct()` on the `aaChange.2` column to remove any aaChange duplicates.
+
+Lastly I condense the dataframe down for readability when I send it to Dallas.
+
+```{r}
+unique.df <- anti_join(common.df, dup.df, by = "aaChange") |> 
+  separate_longer_delim(cols = AAChange.refGene, delim = ",") |> 
+  separate_wider_delim(cols = AAChange.refGene,
+                       delim = ":",
+                       names = c("Gene.refGene.2", "tx.2", "exon.2", "txChange.2", "aaChange.2")) |> 
+  select(!(tx:aaChange) & !tx.2) |> 
+  distinct() |> 
+  select(c(Tumor_Sample_Barcode, Gene.refGene.2:aaChange.2))
+  
+```
+
+Write the file
+
+```{r}
+write.csv(unique.df, file = paste0(results.dir, "cell.line.unique.variants.csv"))
+```
+
+
+
+
+
+
+
+
+
+
+Write the results
+
+```{r}
+write.csv(unique.df, paste0(results.dir, "ds1.and.ds81.variants.csv"))
+```
+
+
+
+
+
+
+
+
+
+
+
+# All CL samples together
+
+
+
+```{r}
+temp.maf.df <- ds.maf@data |> 
+  select(Tumor_Sample_Barcode:AAChange.refGene) |> 
+```
+
+```{r}
+# Identify duplicates and make a single column datafame with them
+dup.df <- temp.maf.df |> 
+  group_by(aaChange) |> 
+  summarize(count = n()) |> 
+  filter(count > 1) |> 
+  select(aaChange)
+
+# anti_join with original dataframe to remove all duplicates
+ds1.df <- anti_join(temp.maf.df, dup.df, by = "aaChange") |> 
+  filter(Tumor_Sample_Barcode == "DS-1-CL") |> 
+  separate_longer_delim(cols = AAChange.refGene, delim = ",")
+
+ds81.df <- anti_join(temp.maf.df, dup.df, by = "aaChange") |> 
+  filter(Tumor_Sample_Barcode == "DS-81-CL")
+
+rm(ds81.cl.common.df)
+```
+
+
+
+
+
+
+```{r}
+sessionInfo()
+```
+
