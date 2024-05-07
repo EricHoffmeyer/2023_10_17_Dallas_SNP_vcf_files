@@ -27,6 +27,9 @@ I did some troubleshooting and fixed the issue where the MAF results were not ma
 
 Went through the MAFtools vignette with the dataset, looking for interesting functions, plots, and other outputs. Results from that notebook are saved here.
 
+## 2024_05_01_results
+
+Contains results from 2024_05_01 notebook, where the ds.maf@data table was pulled out and was interrogated looking for common variants, unique variants, etc.
 
 ## 2024_05_03 Code Review
 
