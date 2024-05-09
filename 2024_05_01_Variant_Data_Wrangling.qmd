@@ -123,8 +123,6 @@ write.csv(unique.df, paste0(results.dir, "ds1.and.ds81.variants.csv"))
 
 # All CL samples together
 
-
-
 ```{r}
 temp.maf.df <- ds.maf@data |> 
   select(Tumor_Sample_Barcode:AAChange.refGene) |> 
